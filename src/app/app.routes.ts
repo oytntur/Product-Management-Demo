@@ -18,6 +18,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
+    data: { breadcrumb: 'Admin' },
     loadComponent: () =>
       import('./helpers/layout/admin-layout/admin-layout.component').then(
         (m) => m.AdminLayoutComponent
@@ -25,23 +26,27 @@ export const routes: Routes = [
     children: [
       {
         path: 'home',
+        data: { breadcrumb: 'Home' },
         loadComponent: () =>
           import('./pages/admin/home/home.component').then((m) => m.HomeComponent),
       },
       {
         path: 'products',
+        data: { breadcrumb: 'Products' },
         loadComponent: () =>
           import('./pages/admin/product-list/product-list.component').then(
             (m) => m.ProductListComponent
           ),
       },
       {
-        path: 'products/:id',
+        path: 'products/:productId',
+        data: { breadcrumb: 'Product Details' },
         loadComponent: () =>
           import('./pages/admin/product/product.component').then((m) => m.ProductComponent),
       },
       {
         path: 'products/:productId/edit',
+        data: { breadcrumb: 'Edit Product' },
         loadComponent: () =>
           import('./pages/admin/product-add/product-edit.component').then(
             (m) => m.ProductEditComponent

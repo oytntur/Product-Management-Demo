@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-sm navbar-light bg-primary">
+<nav class="navbar navbar-expand-sm navbar-light bg-primary-reverse">
   <a class="navbar-brand" href="#">Navbar</a>
   <button
     class="navbar-toggler d-lg-none"
@@ -34,6 +34,12 @@
           <a class="dropdown-item" href="#">Action 2</a>
         </div>
       </li>
+
+      @if(productId(); as productId) {
+      <li>
+        <app-navbar-product-select [currentProductId]="productId"></app-navbar-product-select>
+      </li>
+      }
     </ul>
     <form class="d-flex my-2 my-lg-0">
       <input class="form-control me-sm-2" type="text" placeholder="Search" />

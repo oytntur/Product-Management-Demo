@@ -4,7 +4,6 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { filter, switchMap, take } from 'rxjs';
 
 import { ProductService } from '../../../helpers/services/product.service';
-// import { OrderService } from '../../../helpers/services/order.service'; // hazır değilse sonra ekle
 import { Product } from '../../../helpers/models/product.model';
 import { NgFor } from '@angular/common';
 import { OrderService } from '../../../helpers/services/order.service';
@@ -228,12 +227,9 @@ export class ProductEditComponent {
       // UPDATE
       console.log('Update product', this.form.value);
 
-      this.productService
-        .updateProduct(productPayload)
-        .pipe(take(1))
-        .subscribe((updatedProduct) => {
-          console.log('Product updated:', updatedProduct);
-        });
+      this.productService.updateProduct(productPayload).subscribe((updatedProduct) => {
+        console.log('Product updated:', updatedProduct);
+      });
     } else {
       // CREATE
       console.log('Create product', this.form.value);
