@@ -1,0 +1,285 @@
+// Product Component Styles with DevExtreme Integration
+.container-fluid {
+  max-width: 1400px;
+}
+
+// Card Enhancements
+.card {
+  border: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .card-header {
+    border-radius: 12px 12px 0 0 !important;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+    padding: 1.25rem 1.5rem;
+
+    &.bg-primary {
+      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+    }
+
+    .card-title {
+      font-weight: 600;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+}
+
+// Product Status Badge
+.product-status {
+  .badge {
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.875rem;
+  }
+}
+
+// Detail Items
+.detail-item {
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #007bff;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #e9ecef;
+    transform: translateX(2px);
+  }
+
+  .detail-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+    display: block;
+  }
+
+  .detail-value {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #212529;
+    margin: 0;
+  }
+}
+
+// Inventory Stats
+.inventory-stats {
+  .stat-item {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #e9ecef;
+    }
+
+    .stat-label {
+      font-weight: 500;
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+
+    .badge {
+      padding: 0.4rem 0.8rem;
+      font-weight: 600;
+      border-radius: 15px;
+    }
+  }
+
+  .stat-summary {
+    padding: 1rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 10px;
+    border: 2px dashed #007bff;
+    margin-top: 1rem;
+  }
+}
+
+// Flexbox layout for buttons
+.d-flex.gap-2 {
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+// Alert Enhancements
+.alert {
+  border: none;
+  border-radius: 10px;
+  border-left: 4px solid #ffc107;
+
+  &.alert-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    color: #856404;
+
+    .fas {
+      color: #f39c12;
+    }
+  }
+}
+
+// Price Display
+h2 {
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+// Icons
+.fas {
+  &.fa-3x {
+    opacity: 0.6;
+  }
+}
+
+// Responsive Adjustments
+@media (max-width: 768px) {
+  .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .card {
+    margin-bottom: 1rem;
+
+    .card-header {
+      padding: 1rem 1.25rem;
+
+      .card-title {
+        font-size: 1.25rem;
+      }
+    }
+
+    .card-body {
+      padding: 1.25rem;
+    }
+  }
+
+  .detail-item {
+    margin-bottom: 0.75rem;
+  }
+
+  // Stack product header on mobile
+  .col-md-6.text-md-end {
+    text-align: start !important;
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .col-sm-6 {
+    margin-bottom: 1rem;
+  }
+
+  .inventory-stats {
+    .stat-item {
+      padding: 0.75rem;
+    }
+  }
+
+  .detail-item {
+    padding: 0.5rem;
+  }
+}
+
+// Dark mode support for DevExtreme
+@media (prefers-color-scheme: dark) {
+  .card {
+    background: #2d3436;
+    color: #ddd;
+
+    .card-header {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .detail-item {
+    background: #363636;
+    border-left-color: #74b9ff;
+
+    &:hover {
+      background: #404040;
+    }
+
+    .detail-label {
+      color: #b2bec3;
+    }
+
+    .detail-value {
+      color: #ddd;
+    }
+  }
+
+  .inventory-stats {
+    .stat-item {
+      background: #363636;
+
+      &:hover {
+        background: #404040;
+      }
+
+      .stat-label {
+        color: #b2bec3;
+      }
+    }
+
+    .stat-summary {
+      background: #363636;
+      border-color: #74b9ff;
+    }
+  }
+
+  .alert.alert-warning {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+  }
+}
+
+// Animation for cards entering
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+// Custom scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #007bff;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0056b3;
+}

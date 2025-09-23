@@ -8,17 +8,20 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-navbar-product-select',
   template: `
-    <dx-select-box
-      [items]="(products$ | async) || []"
-      placeholder="Select Product"
-      valueExpr="id"
-      [value]="currentProductId()"
-      displayExpr="name"
-      style="width: 200px;"
-      (onValueChanged)="onProductSelected($event)"
-    ></dx-select-box>
+    <div class="d-flex align-items-center gap-2">
+      <h3 class="m-0">Ürün Detay /</h3>
+      <dx-select-box
+        [items]="(products$ | async) || []"
+        placeholder="Select Product"
+        valueExpr="id"
+        [value]="currentProductId()"
+        displayExpr="name"
+        style="width: 300px;"
+        (onValueChanged)="onProductSelected($event)"
+      ></dx-select-box>
+    </div>
   `,
-  styles: [``],
+  styles: [],
   imports: [DxSelectBoxModule, AsyncPipe],
 })
 export class NavbarProductSelectComponent {

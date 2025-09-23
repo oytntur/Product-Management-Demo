@@ -3,12 +3,13 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ProductService } from '../../../helpers/services/product.service';
 import { switchMap } from 'rxjs';
 import { AsyncPipe, JsonPipe } from '@angular/common';
+import { DxButtonModule, DxProgressBarModule, DxLoadIndicatorModule } from 'devextreme-angular';
 
 @Component({
   selector: 'app-admin-product',
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.scss'],
-  imports: [AsyncPipe, JsonPipe],
+  imports: [AsyncPipe, DxButtonModule, DxProgressBarModule, DxLoadIndicatorModule],
 })
 export class ProductComponent {
   productId = input<number | undefined>(undefined);
