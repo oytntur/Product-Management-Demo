@@ -47,8 +47,8 @@ export class LoginComponent {
         this.router.navigate(['/admin/home']);
       })
       .catch((error) => {
-        console.error('Login error:', error);
-        this.errorMessage.set('Login failed. Please check your credentials and try again.');
+        console.error('Giriş hatası:', error);
+        this.errorMessage.set('Giriş başarısız. Lütfen bilgilerinizi kontrol edip tekrar deneyin.');
       })
       .finally(() => {
         this.isSubmitting.set(false);

@@ -18,7 +18,7 @@ import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
   imports: [ReactiveFormsModule, DxTextBoxComponent, DxButtonComponent],
 })
 export class RegisterComponent {
-  // TODO:move this to a separate file
+  // TODO:bunu ayrı bir dosyaya taşı
   passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');
@@ -40,14 +40,14 @@ export class RegisterComponent {
   );
 
   onSubmit() {
-    console.log(this.registerForm.value);
-    console.log(this.registerForm.errors);
+    console.log('Kayıt formu değerleri', this.registerForm.value);
+    console.log('Kayıt formu hataları', this.registerForm.errors);
     if (this.registerForm.valid) {
       const { email, password, confirmPassword } = this.registerForm.value;
-      // Handle registration logic here, e.g., call a registration service
-      console.log('Registering user with', email, password);
+      // Kayıt mantığını burada ele alın, örneğin bir kayıt servisi çağırın
+      console.log('Kullanıcı şu bilgilerle kaydediliyor', email, password);
     } else {
-      // Mark all fields as touched to trigger validation messages
+      // Doğrulama mesajlarını göstermek için tüm alanları touched olarak işaretleyin
       this.registerForm.markAllAsTouched();
     }
   }

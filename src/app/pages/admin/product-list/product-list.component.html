@@ -1,5 +1,5 @@
-<h2>Admin Product List Page</h2>
-<dx-button text="Add New Product" (onClick)="addNewProduct()"></dx-button>
+<h2>Yönetim Ürün Listesi</h2>
+<dx-button text="Yeni Ürün Ekle" (onClick)="addNewProduct()"></dx-button>
 <dx-data-grid
   [dataSource]="products | async"
   [columns]="[
@@ -23,15 +23,15 @@
 >
   <dxo-filter-row [visible]="true"></dxo-filter-row>
   <dxo-search-panel [visible]="true" />
-  <dxi-column dataField="id" caption="Product ID" />
-  <dxi-column dataField="supplierId" caption="Supplier ID" />
-  <dxi-column dataField="categoryId" caption="Category ID" />
-  <dxi-column dataField="quantityPerUnit" caption="Quantity Per Unit" />
-  <dxi-column dataField="unitPrice" caption="Unit Price" format="currency" />
-  <dxi-column dataField="unitsInStock" caption="Units In Stock" />
-  <dxi-column dataField="unitsOnOrder" caption="Units On Order" />
-  <dxi-column dataField="reorderLevel" caption="Reorder Level" />
-  <dxi-column dataField="discontinued" caption="Discontinued" dataType="boolean" />
+  <dxi-column dataField="id" caption="Ürün ID" />
+  <dxi-column dataField="supplierId" caption="Tedarikçi ID" />
+  <dxi-column dataField="categoryId" caption="Kategori ID" />
+  <dxi-column dataField="quantityPerUnit" caption="Birim Başına Miktar" />
+  <dxi-column dataField="unitPrice" caption="Birim Fiyat" format="currency" />
+  <dxi-column dataField="unitsInStock" caption="Stoktaki Ürün" />
+  <dxi-column dataField="unitsOnOrder" caption="Siparişteki Ürün" />
+  <dxi-column dataField="reorderLevel" caption="Yeniden Sipariş" />
+  <dxi-column dataField="discontinued" caption="Pasif" dataType="boolean" />
   <dxo-editing mode="row" [allowUpdating]="true" [allowDeleting]="true" />
   <dxi-column type="buttons">
     <dxi-button

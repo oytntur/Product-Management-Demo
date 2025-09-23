@@ -48,7 +48,7 @@
   - Siparişlerde değişiklik desteği.
 
 ## 🎯 5. Teknik Gereksinimler
-- [ ] Change Detection Strategy → `OnPush`.
+- [ ] Değişiklik Algılama Stratejisi → `OnPush`.
 - [x] Standalone componentler ile geliştirme.  [completion:: 2025-09-23]
 - [x] ReactiveForms tüm inputlarda kullan.  [completion:: 2025-09-23]
 - [ ] API çağrıları için HttpClient + Interceptor (401/500 handling).
@@ -65,8 +65,8 @@
 - [ ] Navbar’daki select-box’ı **dinamik module component loader** ile geliştirme.
 
 ## 🎯 7. Hedef Bazlı Timeline (Öneri)
-- Gün 1–2 → Setup + Auth (Login/Register)  
-- Gün 3–4 → Layout + Routing + Interceptor  
+- Gün 1–2 → Kurulum + Kimlik Doğrulama (Giriş/Kayıt)  
+- Gün 3–4 → Arayüz + Yönlendirme + Interceptor  
 - Gün 5–6 → Ürün Listesi + Ürün Detay  
 - Gün 7–8 → Ürün Kayıt + Güncelleme + Sipariş yönetimi  
 - Gün 9 → Final testler, production build, GitHub repo düzeni  

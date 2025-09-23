@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
       <h3 class="m-0">Ürün Detay /</h3>
       <dx-select-box
         [items]="(products$ | async) || []"
-        placeholder="Select Product"
+        placeholder="Ürün seçin"
         valueExpr="id"
         [value]="currentProductId()"
         displayExpr="name"
@@ -31,7 +31,7 @@ export class NavbarProductSelectComponent {
   router = inject(Router);
 
   currentProductId = computed(() => {
-    //get productId from current url
+    // Mevcut URL'den productId değerini al
     const url = this.router.url;
     const match = url.match(/products\/(\d+)/);
     return match ? Number(match[1]) : null;
@@ -39,7 +39,7 @@ export class NavbarProductSelectComponent {
 
   onProductSelected(event: any) {
     const selectedProductId = event.value;
-    //get current route and replace productId parameter
+    // Mevcut rotayı al ve productId parametresini değiştir
     const currentUrl = this.router.url;
 
     const newUrl = currentUrl.replace(/products\/\d+/, `products/${selectedProductId}`);

@@ -1,12 +1,12 @@
 <form [formGroup]="form" (ngSubmit)="submit()" class="product-form">
   <fieldset formGroupName="product" class="border p-4 rounded product-fieldset">
-    <legend>Product</legend>
+    <legend>Ürün</legend>
 
     <div class="form-grid">
       <div class="form-grid-item">
         <dx-text-box
           formControlName="name"
-          label="Name *"
+          label="Ad *"
           labelMode="floating"
           [showClearButton]="true"
         ></dx-text-box>
@@ -15,7 +15,7 @@
       <div class="form-grid-item">
         <dx-text-box
           formControlName="quantityPerUnit"
-          label="Quantity Per Unit *"
+          label="Birim Başına Miktar *"
           labelMode="floating"
           [showClearButton]="true"
         ></dx-text-box>
@@ -24,7 +24,7 @@
       <div class="form-grid-item">
         <dx-number-box
           formControlName="unitPrice"
-          label="Unit Price *"
+          label="Birim Fiyat *"
           labelMode="floating"
           [showSpinButtons]="true"
           [min]="0"
@@ -34,7 +34,7 @@
       <div class="form-grid-item">
         <dx-number-box
           formControlName="unitsInStock"
-          label="Units In Stock"
+          label="Stoktaki Ürün"
           labelMode="floating"
           [showSpinButtons]="true"
           [min]="0"
@@ -44,7 +44,7 @@
       <div class="form-grid-item">
         <dx-number-box
           formControlName="unitsOnOrder"
-          label="Units On Order"
+          label="Siparişteki Ürün"
           labelMode="floating"
           [showSpinButtons]="true"
           [min]="0"
@@ -54,7 +54,7 @@
       <div class="form-grid-item">
         <dx-number-box
           formControlName="reorderLevel"
-          label="Reorder Level"
+          label="Yeniden Sipariş"
           labelMode="floating"
           [showSpinButtons]="true"
           [min]="0"
@@ -62,24 +62,24 @@
       </div>
 
       <div class="form-grid-full discontinued-field">
-        <dx-check-box formControlName="discontinued" text="Discontinued"></dx-check-box>
+        <dx-check-box formControlName="discontinued" text="Pasif"></dx-check-box>
       </div>
     </div>
   </fieldset>
 
   <section class="border p-4 rounded orders-section">
     <div class="orders-header">
-      <legend>Orders (optional)</legend>
-      <dx-button text="Add Order" icon="add" type="default" (onClick)="addOrder()"></dx-button>
+      <legend>Siparişler (opsiyonel)</legend>
+      <dx-button text="Sipariş Ekle" icon="add" type="default" (onClick)="addOrder()"></dx-button>
     </div>
 
     <div formArrayName="orders" class="orders-list">
       @for (orderFG of ordersFA.controls; let i = $index; track i) {
         <div [formGroupName]="i" class="border rounded p-3 order-card">
           <div class="order-card-header">
-            <h4>Order #{{ i + 1 }}</h4>
+            <h4>Sipariş #{{ i + 1 }}</h4>
             <dx-button
-              text="Remove"
+              text="Kaldır"
               type="danger"
               icon="trash"
               stylingMode="text"
@@ -91,7 +91,7 @@
             <div class="order-grid-item">
               <dx-text-box
                 formControlName="customerId"
-                label="Customer Id"
+                label="Müşteri ID"
                 labelMode="floating"
                 [showClearButton]="true"
               ></dx-text-box>
@@ -100,7 +100,7 @@
             <div class="order-grid-item">
               <dx-number-box
                 formControlName="employeeId"
-                label="Employee Id"
+                label="Personel ID"
                 labelMode="floating"
                 [showSpinButtons]="true"
               ></dx-number-box>
@@ -109,7 +109,7 @@
             <div class="order-grid-item">
               <dx-date-box
                 formControlName="orderDate"
-                label="Order Date"
+                label="Sipariş Tarihi"
                 labelMode="floating"
                 type="date"
                 dateSerializationFormat="yyyy-MM-dd"
@@ -119,7 +119,7 @@
             <div class="order-grid-item">
               <dx-date-box
                 formControlName="requiredDate"
-                label="Required Date"
+                label="Gerekli Tarih"
                 labelMode="floating"
                 type="date"
                 dateSerializationFormat="yyyy-MM-dd"
@@ -129,7 +129,7 @@
             <div class="order-grid-item">
               <dx-date-box
                 formControlName="shippedDate"
-                label="Shipped Date"
+                label="Gönderim Tarihi"
                 labelMode="floating"
                 type="date"
                 dateSerializationFormat="yyyy-MM-dd"
@@ -139,7 +139,7 @@
             <div class="order-grid-item">
               <dx-number-box
                 formControlName="shipVia"
-                label="Ship Via"
+                label="Nakliye Kanalı"
                 labelMode="floating"
                 [showSpinButtons]="true"
               ></dx-number-box>
@@ -148,7 +148,7 @@
             <div class="order-grid-item">
               <dx-number-box
                 formControlName="freight"
-                label="Freight"
+                label="Nakliye Ücreti"
                 labelMode="floating"
                 [showSpinButtons]="true"
                 [min]="0"
@@ -158,7 +158,7 @@
             <div class="order-grid-item">
               <dx-text-box
                 formControlName="shipName"
-                label="Ship Name"
+                label="Gönderim Adı"
                 labelMode="floating"
                 [showClearButton]="true"
               ></dx-text-box>
@@ -166,12 +166,12 @@
           </div>
 
           <fieldset formGroupName="shipAddress" class="border p-3 rounded ship-address">
-            <legend>Ship Address</legend>
+            <legend>Teslimat Adresi</legend>
             <div class="address-grid">
               <div class="address-grid-item">
                 <dx-text-box
                   formControlName="street"
-                  label="Street"
+                  label="Sokak"
                   labelMode="floating"
                   [showClearButton]="true"
                 ></dx-text-box>
@@ -180,7 +180,7 @@
               <div class="address-grid-item">
                 <dx-text-box
                   formControlName="city"
-                  label="City"
+                  label="Şehir"
                   labelMode="floating"
                   [showClearButton]="true"
                 ></dx-text-box>
@@ -189,7 +189,7 @@
               <div class="address-grid-item">
                 <dx-text-box
                   formControlName="region"
-                  label="Region"
+                  label="Bölge"
                   labelMode="floating"
                   [showClearButton]="true"
                 ></dx-text-box>
@@ -198,7 +198,7 @@
               <div class="address-grid-item">
                 <dx-number-box
                   formControlName="postalCode"
-                  label="Postal Code"
+                  label="Posta Kodu"
                   labelMode="floating"
                   [showSpinButtons]="true"
                 ></dx-number-box>
@@ -207,7 +207,7 @@
               <div class="address-grid-item">
                 <dx-text-box
                   formControlName="country"
-                  label="Country"
+                  label="Ülke"
                   labelMode="floating"
                   [showClearButton]="true"
                 ></dx-text-box>
@@ -217,9 +217,9 @@
 
           <div class="border rounded p-3 details-card">
             <div class="details-header">
-              <h5>Details</h5>
+              <h5>Detaylar</h5>
               <dx-button
-                text="Add Detail"
+                text="Detay Ekle"
                 icon="add"
                 type="default"
                 stylingMode="text"
@@ -232,14 +232,14 @@
                 <div [formGroupName]="j" class="details-grid">
                   <dx-number-box
                     formControlName="productId"
-                    label="Product Id"
+                    label="Ürün ID"
                     labelMode="floating"
                     [showSpinButtons]="true"
                   ></dx-number-box>
 
                   <dx-number-box
                     formControlName="unitPrice"
-                    label="Unit Price"
+                    label="Birim Fiyat"
                     labelMode="floating"
                     [showSpinButtons]="true"
                     [min]="0"
@@ -247,7 +247,7 @@
 
                   <dx-number-box
                     formControlName="quantity"
-                    label="Quantity"
+                    label="Miktar"
                     labelMode="floating"
                     [showSpinButtons]="true"
                     [min]="1"
@@ -255,7 +255,7 @@
 
                   <dx-number-box
                     formControlName="discount"
-                    label="Discount (0-1)"
+                    label="İndirim (0-1)"
                     labelMode="floating"
                     [showSpinButtons]="true"
                     [min]="0"
@@ -265,7 +265,7 @@
 
                   <div class="details-actions">
                     <dx-button
-                      text="Remove Detail"
+                      text="Detayı Kaldır"
                       type="danger"
                       stylingMode="text"
                       icon="trash"
@@ -283,7 +283,7 @@
 
   <div class="flex gap-3">
     <dx-button
-      [text]="isEdit() ? 'Update' : 'Create'"
+      [text]="isEdit() ? 'Güncelle' : 'Oluştur'"
       type="success"
       [useSubmitBehavior]="true"
     ></dx-button>

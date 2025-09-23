@@ -5,7 +5,7 @@ import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
-  authApiUrl = 'http://localhost:3000/graphql'; // Replace with your actual API URL
+  authApiUrl = 'http://localhost:3000/graphql'; // Gerçek API adresinizle değiştirin
   constructor() {}
   http = inject(HttpClient);
 
@@ -58,14 +58,14 @@ export class AuthService {
         return user;
       })
       .catch((error) => {
-        console.error('Login error', error);
+        console.error('Giriş hatası', error);
         throw error;
       });
   }
 
   register(email: string, password: string): void {
-    // Implement registration logic here
-    console.log('Registering with', email, password);
+    // Kayıt mantığını burada uygulayın
+    console.log('Şu bilgilerle kayıt olunuyor', email, password);
   }
 
   getAccessToken(): string | null {
@@ -81,7 +81,7 @@ export class AuthService {
       this.currentUser = parsed ?? undefined;
       return parsed?.accessToken ?? null;
     } catch (error) {
-      console.warn('Failed to parse cached currentUser', error);
+      console.warn('Önbellekteki currentUser çözümlenemedi', error);
       return null;
     }
   }

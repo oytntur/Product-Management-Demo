@@ -1,11 +1,11 @@
 <div class="login-page">
-  <h2>Login Page</h2>
-  <!-- Add your login form here -->
+  <h2>Kayıt Sayfası</h2>
+  <!-- Kayıt formunuzu buraya ekleyin -->
   <form [formGroup]="registerForm">
     <div class="mb-3">
       <dx-text-box
         mode="email"
-        label="Email"
+        label="E-posta"
         labelMode="floating"
         formControlName="email"
         aria-describedby="emailHelpId"
@@ -15,24 +15,24 @@
     <div class="mb-3">
       <dx-text-box
         mode="password"
-        label="Password"
+        label="Şifre"
         labelMode="floating"
         formControlName="password"
         aria-describedby="passwordHelpId"
-        placeholder="Password"
+        placeholder="Şifre"
       />
     </div>
     <div class="mb-3">
       <dx-text-box
         mode="password"
-        label="Confirm Password"
+        label="Şifreyi Onayla"
         labelMode="floating"
         formControlName="confirmPassword"
         aria-describedby="passwordHelpId"
-        placeholder="Password"
+        placeholder="Şifre"
       />
     </div>
 
-    <dx-button type="warning" (click)="onSubmit()">Submit</dx-button>
+    <dx-button type="warning" (click)="onSubmit()">Gönder</dx-button>
   </form>
 </div>

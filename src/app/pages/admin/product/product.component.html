@@ -1,7 +1,7 @@
 <div class="container-fluid py-4">
   @if (product(); as product) {
   <div class="row">
-    <!-- Product Header -->
+    <!-- Ürün Başlığı -->
     <div class="col-12 mb-4">
       <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
@@ -18,63 +18,63 @@
                   class="badge fs-6"
                   [class]="product.discontinued ? 'bg-danger' : 'bg-success'"
                 >
-                  {{ product.discontinued ? 'Discontinued' : 'Active' }}
+                  {{ product.discontinued ? 'Pasif' : 'Aktif' }}
                 </span>
               </div>
             </div>
             <div class="col-md-6 text-md-end">
               <h2 class="text-primary mb-0">${{ product.unitPrice }}</h2>
-              <small class="text-muted">per {{ product.quantityPerUnit }}</small>
+              <small class="text-muted">{{ product.quantityPerUnit }} başına</small>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Product Details -->
+    <!-- Ürün Detayları -->
     <div class="col-lg-8 mb-4">
       <div class="card shadow-sm h-100">
         <div class="card-header">
           <h5 class="card-title mb-0">
             <i class="fas fa-info-circle me-2"></i>
-            Product Details
+            Ürün Bilgileri
           </h5>
         </div>
         <div class="card-body">
           <div class="row g-3">
             <div class="col-sm-6">
               <div class="detail-item">
-                <label class="detail-label">Product ID</label>
+                <label class="detail-label">Ürün ID</label>
                 <div class="detail-value">{{ product.id }}</div>
               </div>
             </div>
             <div class="col-sm-6">
               <div class="detail-item">
-                <label class="detail-label">Supplier ID</label>
+                <label class="detail-label">Tedarikçi ID</label>
                 <div class="detail-value">{{ product.supplierId }}</div>
               </div>
             </div>
             <div class="col-sm-6">
               <div class="detail-item">
-                <label class="detail-label">Category ID</label>
+                <label class="detail-label">Kategori ID</label>
                 <div class="detail-value">{{ product.categoryId }}</div>
               </div>
             </div>
             <div class="col-sm-6">
               <div class="detail-item">
-                <label class="detail-label">Quantity per Unit</label>
+                <label class="detail-label">Birim Başına Miktar</label>
                 <div class="detail-value">{{ product.quantityPerUnit }}</div>
               </div>
             </div>
             <div class="col-sm-6">
               <div class="detail-item">
-                <label class="detail-label">Unit Price</label>
+                <label class="detail-label">Birim Fiyat</label>
                 <div class="detail-value text-primary fw-bold">${{ product.unitPrice }}</div>
               </div>
             </div>
             <div class="col-sm-6">
               <div class="detail-item">
-                <label class="detail-label">Reorder Level</label>
+                <label class="detail-label">Yeniden Sipariş</label>
                 <div class="detail-value">{{ product.reorderLevel }}</div>
               </div>
             </div>
@@ -83,21 +83,21 @@
       </div>
     </div>
 
-    <!-- Inventory Status -->
+    <!-- Stok Durumu -->
     <div class="col-lg-4 mb-4">
       <div class="card shadow-sm h-100">
         <div class="card-header">
           <h5 class="card-title mb-0">
             <i class="fas fa-warehouse me-2"></i>
-            Inventory Status
+            Stok Durumu
           </h5>
         </div>
         <div class="card-body">
           <div class="inventory-stats">
-            <!-- Units in Stock with DevExtreme Progress Bar -->
+            <!-- DevExtreme Progress Bar ile stoktaki birimler -->
             <div class="stat-item mb-3">
               <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="stat-label">Units in Stock</span>
+                <span class="stat-label">Stoktaki Ürün</span>
                 <span
                   class="badge"
                   [class]="
@@ -116,29 +116,29 @@
               ></dx-progress-bar>
             </div>
 
-            <!-- Units on Order -->
+            <!-- Siparişteki birimler -->
             <div class="stat-item mb-3">
               <div class="d-flex justify-content-between align-items-center">
-                <span class="stat-label">Units on Order</span>
+                <span class="stat-label">Siparişteki Ürün</span>
                 <span class="badge bg-info">{{ product.unitsOnOrder }}</span>
               </div>
             </div>
 
-            <!-- Reorder Level Alert -->
+            <!-- Yeniden sipariş uyarısı -->
             @if (product.unitsInStock <= product.reorderLevel) {
             <div class="alert alert-warning d-flex align-items-center">
               <i class="fas fa-exclamation-triangle me-2"></i>
               <div>
-                <strong>Low Stock Alert!</strong><br />
-                <small>Stock level is at or below reorder threshold.</small>
+                <strong>Düşük Stok Uyarısı!</strong><br />
+                <small>Stok seviyesi yeniden sipariş eşiğinde veya altında.</small>
               </div>
             </div>
             }
 
-            <!-- Total Available -->
+            <!-- Toplam erişilebilir -->
             <div class="stat-summary">
               <div class="d-flex justify-content-between">
-                <span class="fw-bold">Total Available:</span>
+                <span class="fw-bold">Toplam Erişilebilir:</span>
                 <span class="fw-bold text-primary">{{
                   product.unitsInStock + product.unitsOnOrder
                 }}</span>
@@ -149,19 +149,19 @@
       </div>
     </div>
 
-    <!-- Quick Actions with DevExtreme Buttons -->
+    <!-- DevExtreme butonları ile hızlı işlemler -->
     <div class="col-12">
       <div class="card shadow-sm">
         <div class="card-header">
           <h5 class="card-title mb-0">
             <i class="fas fa-tools me-2"></i>
-            Quick Actions
+            Hızlı İşlemler
           </h5>
         </div>
         <div class="card-body">
           <div class="d-flex flex-wrap gap-2">
             <dx-button
-              text="Edit Product"
+              text="Ürünü Düzenle"
               type="normal"
               stylingMode="contained"
               icon="edit"
@@ -169,7 +169,7 @@
             ></dx-button>
 
             <dx-button
-              text="Add Stock"
+              text="Stok Ekle"
               type="success"
               stylingMode="contained"
               icon="plus"
@@ -177,7 +177,7 @@
             ></dx-button>
 
             <dx-button
-              text="View Orders"
+              text="Siparişleri Gör"
               type="normal"
               stylingMode="outlined"
               icon="cart"
@@ -185,7 +185,7 @@
             ></dx-button>
 
             <dx-button
-              text="Analytics"
+              text="Analizler"
               type="normal"
               stylingMode="text"
               icon="chart"
@@ -193,7 +193,7 @@
             ></dx-button>
 
             <dx-button
-              [text]="product.discontinued ? 'Reactivate' : 'Discontinue'"
+              [text]="product.discontinued ? 'Tekrar Aktifleştir' : 'Pasifleştir'"
               [type]="product.discontinued ? 'success' : 'danger'"
               stylingMode="outlined"
               [icon]="product.discontinued ? 'activefolder' : 'remove'"
@@ -210,7 +210,7 @@
       <div class="card shadow-sm">
         <div class="card-body text-center py-5">
           <dx-load-indicator [visible]="true" [height]="60" [width]="60"></dx-load-indicator>
-          <p class="mt-3 text-muted">Loading product details...</p>
+          <p class="mt-3 text-muted">Ürün detayları yükleniyor...</p>
         </div>
       </div>
     </div>
@@ -221,10 +221,10 @@
       <div class="card shadow-sm">
         <div class="card-body text-center py-5">
           <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
-          <h4 class="text-muted">No Product Selected</h4>
-          <p class="text-muted">Please select a product to view its details.</p>
+          <h4 class="text-muted">Ürün seçilmedi</h4>
+          <p class="text-muted">Detayları görmek için bir ürün seçin.</p>
           <dx-button
-            text="Browse Products"
+            text="Ürünleri İncele"
             type="default"
             stylingMode="contained"
             icon="bulletlist"

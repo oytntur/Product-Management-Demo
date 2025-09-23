@@ -29,7 +29,7 @@ interface RecentOrderRow {
   id: number;
   customer: string;
   date: string;
-  status: 'Shipped' | 'Pending';
+  status: 'Gönderildi' | 'Hazırlanıyor';
   total: number;
 }
 
@@ -88,33 +88,33 @@ export class HomeComponent {
 
     const summary: DashboardSummaryCard[] = [
       {
-        label: 'Total Products',
+        label: 'Toplam Ürün',
         value: totalProducts,
-        caption: `${activeProducts} active`,
+        caption: `${activeProducts} aktif`,
         icon: 'fas fa-boxes',
         variant: 'primary',
         format: 'number',
       },
       {
-        label: 'Pending Orders',
+        label: 'Bekleyen Sipariş',
         value: pendingOrders,
-        caption: `${shippedOrders.length} shipped`,
+        caption: `${shippedOrders.length} gönderildi`,
         icon: 'fas fa-clipboard-check',
         variant: 'warning',
         format: 'number',
       },
       {
-        label: 'Avg. Order Value',
+        label: 'Ortalama Sipariş Tutarı',
         value: averageOrderValue,
-        caption: 'Across all orders',
+        caption: 'Tüm siparişlerin ortalaması',
         icon: 'fas fa-dollar-sign',
         variant: 'success',
         format: 'currency',
       },
       {
-        label: 'Low Stock Items',
+        label: 'Düşük Stoklu Ürün',
         value: lowStockItems.length,
-        caption: 'Below reorder threshold',
+        caption: 'Yeniden sipariş eşiğinin altında',
         icon: 'fas fa-exclamation-triangle',
         variant: 'info',
         format: 'number',
@@ -136,7 +136,7 @@ export class HomeComponent {
         id: order.id,
         customer: order.customerId,
         date: order.orderDate,
-        status: this.isOrderShipped(order) ? 'Shipped' : 'Pending',
+        status: this.isOrderShipped(order) ? 'Gönderildi' : 'Hazırlanıyor',
         total: this.computeOrderTotal(order),
       }));
 

@@ -6,13 +6,13 @@ export const routes: Routes = [
     children: [
       {
         path: 'login',
-        title: 'Login',
+        title: 'Giriş Yap',
         loadComponent: () =>
           import('./pages/auth/login/login.component').then((m) => m.LoginComponent),
       },
       {
         path: 'register',
-        title: 'Register',
+        title: 'Kayıt Ol',
         loadComponent: () =>
           import('./pages/auth/register/register.component').then((m) => m.RegisterComponent),
       },
@@ -20,7 +20,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    title: 'Admin',
+    title: 'Yönetim',
     loadComponent: () =>
       import('./helpers/layout/admin-layout/admin-layout.component').then(
         (m) => m.AdminLayoutComponent
@@ -28,13 +28,13 @@ export const routes: Routes = [
     children: [
       {
         path: 'home',
-        title: 'Home',
+        title: 'Ana Sayfa',
         loadComponent: () =>
           import('./pages/admin/home/home.component').then((m) => m.HomeComponent),
       },
       {
         path: 'products',
-        title: 'Products',
+        title: 'Ürünler',
         loadComponent: () =>
           import('./pages/admin/product-list/product-list.component').then(
             (m) => m.ProductListComponent
@@ -42,13 +42,13 @@ export const routes: Routes = [
       },
       {
         path: 'products/:productId',
-        title: 'Product Details',
+        title: 'Ürün Detayı',
         loadComponent: () =>
           import('./pages/admin/product/product.component').then((m) => m.ProductComponent),
       },
       {
         path: 'products/:productId/edit',
-        title: 'Edit Product',
+        title: 'Ürünü Düzenle',
         loadComponent: () =>
           import('./pages/admin/product-add/product-edit.component').then(
             (m) => m.ProductEditComponent

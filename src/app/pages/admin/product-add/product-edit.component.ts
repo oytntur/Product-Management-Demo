@@ -242,14 +242,14 @@ export class ProductEditComponent {
 
     if (this.isEdit()) {
       // UPDATE
-      console.log('Update product', this.form.value);
+      console.log('Ürünü güncelle', this.form.value);
 
       this.productService.updateProduct(productPayload).subscribe((updatedProduct) => {
-        console.log('Product updated:', updatedProduct);
+        console.log('Ürün güncellendi:', updatedProduct);
       });
     } else {
       // CREATE
-      console.log('Create product', this.form.value);
+      console.log('Ürün oluştur', this.form.value);
     }
   }
 }

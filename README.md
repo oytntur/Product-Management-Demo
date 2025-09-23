@@ -1,59 +1,59 @@
 # SabahyildiziInterview1
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.2.
+Bu proje [Angular CLI](https://github.com/angular/angular-cli) 20.3.2 sürümü kullanılarak oluşturuldu.
 
-## Development server
+## Geliştirme sunucusu
 
-To start a local development server, run:
+Yerel geliştirme sunucusunu başlatmak için aşağıdaki komutu çalıştırın:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Sunucu ayağa kalktıktan sonra tarayıcınızda `http://localhost:4200/` adresine gidin. Kaynak dosyalarda yaptığınız değişiklikler uygulamaya otomatik olarak yansıyacaktır.
 
-## Code scaffolding
+## Kod iskeleti oluşturma
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Angular CLI, bileşen (component) oluşturma gibi güçlü iskelet çıkarma araçlarına sahiptir. Yeni bir bileşen oluşturmak için şu komutu kullanın:
 
 ```bash
 ng generate component component-name
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Kullanılabilir tüm şemaları (örneğin `components`, `directives` veya `pipes`) görmek için:
 
 ```bash
 ng generate --help
 ```
 
-## Building
+## Derleme
 
-To build the project run:
+Projeyi derlemek için:
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Bu komut projenizi derler ve çıktı dosyalarını `dist/` klasörüne yerleştirir. Varsayılan olarak üretim derlemesi performans ve hız için optimize edilir.
 
-## Running unit tests
+## Birim testlerini çalıştırma
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+[BKarma](https://karma-runner.github.io) test koşucusu ile birim testlerini çalıştırmak için aşağıdaki komutu kullanın:
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+## Uçtan uca testler
 
-For end-to-end (e2e) testing, run:
+Uçtan uca (e2e) testler için:
 
 ```bash
 ng e2e
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Angular CLI varsayılan olarak bir e2e test çatısı ile gelmez. İhtiyaçlarınıza uygun bir çatı seçebilirsiniz.
 
-## Additional Resources
+## Ek kaynaklar
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Angular CLI kullanımı ve komut referansları hakkında daha fazla bilgi için [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) sayfasını ziyaret edin.

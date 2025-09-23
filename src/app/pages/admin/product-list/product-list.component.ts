@@ -27,29 +27,29 @@ export class ProductListComponent {
   };
 
   addNewProduct() {
-    console.log('Add new product clicked');
+    console.log('Yeni ürün ekleme tıklandı');
   }
 
   updateProduct(event: RowUpdatedEvent) {
-    console.log('Updated product:', event.data);
+    console.log('Güncellenen ürün:', event.data);
     this.productsService.updateProduct(event.data).subscribe({
       next: (updatedProduct) => {
-        console.log('Product updated successfully:', updatedProduct);
+        console.log('Ürün başarıyla güncellendi:', updatedProduct);
       },
       error: (err) => {
-        console.error('Error updating product:', err);
+        console.error('Ürün güncellenirken hata oluştu:', err);
       },
     });
   }
 
   deleteProduct(event: RowRemovedEvent) {
-    console.log('Deleted product:', event.data);
+    console.log('Silinen ürün:', event.data);
     this.productsService.deleteProduct(event.data.id).subscribe({
       next: () => {
-        console.log('Product deleted successfully');
+        console.log('Ürün başarıyla silindi');
       },
       error: (err) => {
-        console.error('Error deleting product:', err);
+        console.error('Ürün silinirken hata oluştu:', err);
       },
     });
   }
@@ -59,7 +59,7 @@ export class ProductListComponent {
   }
 
   stopEditing() {
-    console.log('Stopping editing mode');
+    console.log('Düzenleme modu kapatılıyor');
     this.editingGrid.set(false);
   }
 }

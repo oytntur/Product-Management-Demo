@@ -1,9 +1,9 @@
-// Product Component Styles with DevExtreme Integration
+// DevExtreme entegrasyonu ile ürün bileşeni stilleri
 .container-fluid {
   max-width: 1400px;
 }
 
-// Card Enhancements
+// Kart geliştirmeleri
 .card {
   border: none;
   border-radius: 12px;
@@ -34,7 +34,7 @@
   }
 }
 
-// Product Status Badge
+// Ürün durum rozeti
 .product-status {
   .badge {
     padding: 0.5rem 1rem;
@@ -46,7 +46,7 @@
   }
 }
 
-// Detail Items
+// Detay öğeleri
 .detail-item {
   padding: 0.75rem;
   background: #f8f9fa;
@@ -77,7 +77,7 @@
   }
 }
 
-// Inventory Stats
+// Stok istatistikleri
 .inventory-stats {
   .stat-item {
     padding: 1rem;
@@ -111,13 +111,13 @@
   }
 }
 
-// Flexbox layout for buttons
+// Butonlar için flexbox yerleşimi
 .d-flex.gap-2 {
   gap: 0.5rem;
   flex-wrap: wrap;
 }
 
-// Alert Enhancements
+// Uyarı iyileştirmeleri
 .alert {
   border: none;
   border-radius: 10px;
@@ -133,20 +133,20 @@
   }
 }
 
-// Price Display
+// Fiyat gösterimi
 h2 {
   font-weight: 700;
   letter-spacing: -0.025em;
 }
 
-// Icons
+// Simgeler
 .fas {
   &.fa-3x {
     opacity: 0.6;
   }
 }
 
-// Responsive Adjustments
+// Duyarlı düzen ayarlamaları
 @media (max-width: 768px) {
   .container-fluid {
     padding-left: 1rem;
@@ -173,7 +173,7 @@ h2 {
     margin-bottom: 0.75rem;
   }
 
-  // Stack product header on mobile
+  // Ürün başlığını mobilde alt alta göster
   .col-md-6.text-md-end {
     text-align: start !important;
     margin-top: 1rem;
@@ -196,7 +196,7 @@ h2 {
   }
 }
 
-// Dark mode support for DevExtreme
+// DevExtreme için koyu mod desteği
 @media (prefers-color-scheme: dark) {
   .card {
     background: #2d3436;
@@ -249,7 +249,7 @@ h2 {
   }
 }
 
-// Animation for cards entering
+// Kartların giriş animasyonu
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -265,7 +265,7 @@ h2 {
   animation: fadeInUp 0.5s ease-out;
 }
 
-// Custom scrollbar
+// Özelleştirilmiş kaydırma çubuğu
 ::-webkit-scrollbar {
   width: 8px;
 }
