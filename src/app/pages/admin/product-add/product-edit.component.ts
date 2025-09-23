@@ -97,11 +97,16 @@ export class ProductEditComponent {
         });
       });
 
-    this.productId$.pipe(
-      takeUntilDestroyed(),
-      filter((id): id is number => id !== undefined),
-      switchMap((id) => this.productService.getProductById(id))
-    );
+    this.productId$
+      .pipe(
+        takeUntilDestroyed(),
+        filter((id): id is number => id !== undefined),
+        switchMap((id) => this.orderService.getOrdersByProductId(id))
+      )
+      .subscribe((orders) => {
+        this.clearOrders();
+        orders.forEach((order) => this.pushOrder(order));
+      });
   }
 
   /** --- Orders helpers --- **/

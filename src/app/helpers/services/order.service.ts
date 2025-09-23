@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { API_CONFIG } from '../tokens';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Order } from '../models/order.model';
 
 @Injectable()
@@ -23,5 +23,13 @@ export class OrderService {
 
   updateOrder(order: Order): Observable<Order> {
     return this.httpClient.put<Order>(`${this.apiConfig.URL}/orders/${order.id}`, order);
+  }
+
+  getOrdersByProductId(productId: number): Observable<Order[]> {
+    return this.getOrders().pipe(
+      map((orders) =>
+        orders.filter((order) => order.details.some((detail) => +detail.productId === +productId))
+      )
+    );
   }
 }
