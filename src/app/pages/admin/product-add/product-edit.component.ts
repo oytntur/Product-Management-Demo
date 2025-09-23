@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { filter, switchMap, take } from 'rxjs';
@@ -10,7 +10,6 @@ import { DxButtonModule } from 'devextreme-angular/ui/button';
 
 import { ProductService } from '../../../helpers/services/product.service';
 import { Product } from '../../../helpers/models/product.model';
-import { NgFor } from '@angular/common';
 import { OrderService } from '../../../helpers/services/order.service';
 
 type OrderDetailForm = {
@@ -49,7 +48,6 @@ type OrderForm = {
   styleUrls: ['./product-edit.component.scss'],
   imports: [
     ReactiveFormsModule,
-    NgFor,
     DxTextBoxModule,
     DxNumberBoxModule,
     DxCheckBoxModule,

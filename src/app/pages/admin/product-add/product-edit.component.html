@@ -74,214 +74,210 @@
     </div>
 
     <div formArrayName="orders" class="orders-list">
-      <div
-        *ngFor="let orderFG of ordersFA.controls; let i = index"
-        [formGroupName]="i"
-        class="border rounded p-3 order-card"
-      >
-        <div class="order-card-header">
-          <h4>Order #{{ i + 1 }}</h4>
-          <dx-button
-            text="Remove"
-            type="danger"
-            icon="trash"
-            stylingMode="text"
-            (onClick)="removeOrder(i)"
-          ></dx-button>
-        </div>
-
-        <div class="order-grid">
-          <div class="order-grid-item">
-            <dx-text-box
-              formControlName="customerId"
-              label="Customer Id"
-              labelMode="floating"
-              [showClearButton]="true"
-            ></dx-text-box>
-          </div>
-
-          <div class="order-grid-item">
-            <dx-number-box
-              formControlName="employeeId"
-              label="Employee Id"
-              labelMode="floating"
-              [showSpinButtons]="true"
-            ></dx-number-box>
-          </div>
-
-          <div class="order-grid-item">
-            <dx-date-box
-              formControlName="orderDate"
-              label="Order Date"
-              labelMode="floating"
-              type="date"
-              dateSerializationFormat="yyyy-MM-dd"
-            ></dx-date-box>
-          </div>
-
-          <div class="order-grid-item">
-            <dx-date-box
-              formControlName="requiredDate"
-              label="Required Date"
-              labelMode="floating"
-              type="date"
-              dateSerializationFormat="yyyy-MM-dd"
-            ></dx-date-box>
-          </div>
-
-          <div class="order-grid-item">
-            <dx-date-box
-              formControlName="shippedDate"
-              label="Shipped Date"
-              labelMode="floating"
-              type="date"
-              dateSerializationFormat="yyyy-MM-dd"
-            ></dx-date-box>
-          </div>
-
-          <div class="order-grid-item">
-            <dx-number-box
-              formControlName="shipVia"
-              label="Ship Via"
-              labelMode="floating"
-              [showSpinButtons]="true"
-            ></dx-number-box>
-          </div>
-
-          <div class="order-grid-item">
-            <dx-number-box
-              formControlName="freight"
-              label="Freight"
-              labelMode="floating"
-              [showSpinButtons]="true"
-              [min]="0"
-            ></dx-number-box>
-          </div>
-
-          <div class="order-grid-item">
-            <dx-text-box
-              formControlName="shipName"
-              label="Ship Name"
-              labelMode="floating"
-              [showClearButton]="true"
-            ></dx-text-box>
-          </div>
-        </div>
-
-        <fieldset formGroupName="shipAddress" class="border p-3 rounded ship-address">
-          <legend>Ship Address</legend>
-          <div class="address-grid">
-            <div class="address-grid-item">
-              <dx-text-box
-                formControlName="street"
-                label="Street"
-                labelMode="floating"
-                [showClearButton]="true"
-              ></dx-text-box>
-            </div>
-
-            <div class="address-grid-item">
-              <dx-text-box
-                formControlName="city"
-                label="City"
-                labelMode="floating"
-                [showClearButton]="true"
-              ></dx-text-box>
-            </div>
-
-            <div class="address-grid-item">
-              <dx-text-box
-                formControlName="region"
-                label="Region"
-                labelMode="floating"
-                [showClearButton]="true"
-              ></dx-text-box>
-            </div>
-
-            <div class="address-grid-item">
-              <dx-number-box
-                formControlName="postalCode"
-                label="Postal Code"
-                labelMode="floating"
-                [showSpinButtons]="true"
-              ></dx-number-box>
-            </div>
-
-            <div class="address-grid-item">
-              <dx-text-box
-                formControlName="country"
-                label="Country"
-                labelMode="floating"
-                [showClearButton]="true"
-              ></dx-text-box>
-            </div>
-          </div>
-        </fieldset>
-
-        <div class="border rounded p-3 details-card">
-          <div class="details-header">
-            <h5>Details</h5>
+      @for (orderFG of ordersFA.controls; let i = $index; track i) {
+        <div [formGroupName]="i" class="border rounded p-3 order-card">
+          <div class="order-card-header">
+            <h4>Order #{{ i + 1 }}</h4>
             <dx-button
-              text="Add Detail"
-              icon="add"
-              type="default"
+              text="Remove"
+              type="danger"
+              icon="trash"
               stylingMode="text"
-              (onClick)="addDetail(i)"
+              (onClick)="removeOrder(i)"
             ></dx-button>
           </div>
 
-          <div formArrayName="details" class="details-list">
-            <div
-              *ngFor="let d of getDetailsFA(i).controls; let j = index"
-              [formGroupName]="j"
-              class="details-grid"
-            >
+          <div class="order-grid">
+            <div class="order-grid-item">
+              <dx-text-box
+                formControlName="customerId"
+                label="Customer Id"
+                labelMode="floating"
+                [showClearButton]="true"
+              ></dx-text-box>
+            </div>
+
+            <div class="order-grid-item">
               <dx-number-box
-                formControlName="productId"
-                label="Product Id"
+                formControlName="employeeId"
+                label="Employee Id"
                 labelMode="floating"
                 [showSpinButtons]="true"
               ></dx-number-box>
+            </div>
 
+            <div class="order-grid-item">
+              <dx-date-box
+                formControlName="orderDate"
+                label="Order Date"
+                labelMode="floating"
+                type="date"
+                dateSerializationFormat="yyyy-MM-dd"
+              ></dx-date-box>
+            </div>
+
+            <div class="order-grid-item">
+              <dx-date-box
+                formControlName="requiredDate"
+                label="Required Date"
+                labelMode="floating"
+                type="date"
+                dateSerializationFormat="yyyy-MM-dd"
+              ></dx-date-box>
+            </div>
+
+            <div class="order-grid-item">
+              <dx-date-box
+                formControlName="shippedDate"
+                label="Shipped Date"
+                labelMode="floating"
+                type="date"
+                dateSerializationFormat="yyyy-MM-dd"
+              ></dx-date-box>
+            </div>
+
+            <div class="order-grid-item">
               <dx-number-box
-                formControlName="unitPrice"
-                label="Unit Price"
+                formControlName="shipVia"
+                label="Ship Via"
+                labelMode="floating"
+                [showSpinButtons]="true"
+              ></dx-number-box>
+            </div>
+
+            <div class="order-grid-item">
+              <dx-number-box
+                formControlName="freight"
+                label="Freight"
                 labelMode="floating"
                 [showSpinButtons]="true"
                 [min]="0"
               ></dx-number-box>
+            </div>
 
-              <dx-number-box
-                formControlName="quantity"
-                label="Quantity"
+            <div class="order-grid-item">
+              <dx-text-box
+                formControlName="shipName"
+                label="Ship Name"
                 labelMode="floating"
-                [showSpinButtons]="true"
-                [min]="1"
-              ></dx-number-box>
+                [showClearButton]="true"
+              ></dx-text-box>
+            </div>
+          </div>
 
-              <dx-number-box
-                formControlName="discount"
-                label="Discount (0-1)"
-                labelMode="floating"
-                [showSpinButtons]="true"
-                [min]="0"
-                [max]="1"
-                [step]="0.05"
-              ></dx-number-box>
-
-              <div class="details-actions">
-                <dx-button
-                  text="Remove Detail"
-                  type="danger"
-                  stylingMode="text"
-                  icon="trash"
-                  (onClick)="removeDetail(i, j)"
-                ></dx-button>
+          <fieldset formGroupName="shipAddress" class="border p-3 rounded ship-address">
+            <legend>Ship Address</legend>
+            <div class="address-grid">
+              <div class="address-grid-item">
+                <dx-text-box
+                  formControlName="street"
+                  label="Street"
+                  labelMode="floating"
+                  [showClearButton]="true"
+                ></dx-text-box>
               </div>
+
+              <div class="address-grid-item">
+                <dx-text-box
+                  formControlName="city"
+                  label="City"
+                  labelMode="floating"
+                  [showClearButton]="true"
+                ></dx-text-box>
+              </div>
+
+              <div class="address-grid-item">
+                <dx-text-box
+                  formControlName="region"
+                  label="Region"
+                  labelMode="floating"
+                  [showClearButton]="true"
+                ></dx-text-box>
+              </div>
+
+              <div class="address-grid-item">
+                <dx-number-box
+                  formControlName="postalCode"
+                  label="Postal Code"
+                  labelMode="floating"
+                  [showSpinButtons]="true"
+                ></dx-number-box>
+              </div>
+
+              <div class="address-grid-item">
+                <dx-text-box
+                  formControlName="country"
+                  label="Country"
+                  labelMode="floating"
+                  [showClearButton]="true"
+                ></dx-text-box>
+              </div>
+            </div>
+          </fieldset>
+
+          <div class="border rounded p-3 details-card">
+            <div class="details-header">
+              <h5>Details</h5>
+              <dx-button
+                text="Add Detail"
+                icon="add"
+                type="default"
+                stylingMode="text"
+                (onClick)="addDetail(i)"
+              ></dx-button>
+            </div>
+
+            <div formArrayName="details" class="details-list">
+              @for (d of getDetailsFA(i).controls; let j = $index; track j) {
+                <div [formGroupName]="j" class="details-grid">
+                  <dx-number-box
+                    formControlName="productId"
+                    label="Product Id"
+                    labelMode="floating"
+                    [showSpinButtons]="true"
+                  ></dx-number-box>
+
+                  <dx-number-box
+                    formControlName="unitPrice"
+                    label="Unit Price"
+                    labelMode="floating"
+                    [showSpinButtons]="true"
+                    [min]="0"
+                  ></dx-number-box>
+
+                  <dx-number-box
+                    formControlName="quantity"
+                    label="Quantity"
+                    labelMode="floating"
+                    [showSpinButtons]="true"
+                    [min]="1"
+                  ></dx-number-box>
+
+                  <dx-number-box
+                    formControlName="discount"
+                    label="Discount (0-1)"
+                    labelMode="floating"
+                    [showSpinButtons]="true"
+                    [min]="0"
+                    [max]="1"
+                    [step]="0.05"
+                  ></dx-number-box>
+
+                  <div class="details-actions">
+                    <dx-button
+                      text="Remove Detail"
+                      type="danger"
+                      stylingMode="text"
+                      icon="trash"
+                      (onClick)="removeDetail(i, j)"
+                    ></dx-button>
+                  </div>
+                </div>
+              }
             </div>
           </div>
         </div>
-      </div>
+      }
     </div>
   </section>
 
