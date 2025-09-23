@@ -1,10 +1,10 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { DxButtonComponent } from 'devextreme-angular/ui/button';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, DxButtonComponent],
+  imports: [RouterOutlet, DxButtonComponent, RouterLink],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
