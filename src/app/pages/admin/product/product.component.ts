@@ -1,8 +1,7 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ProductService } from '../../../helpers/services/product.service';
 import { finalize, switchMap, tap } from 'rxjs';
-import { AsyncPipe, JsonPipe } from '@angular/common';
 import { DxButtonModule, DxProgressBarModule, DxLoadIndicatorModule } from 'devextreme-angular';
 import { Product } from '../../../helpers/models/product.model';
 
@@ -10,7 +9,8 @@ import { Product } from '../../../helpers/models/product.model';
   selector: 'app-admin-product',
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.scss'],
-  imports: [AsyncPipe, DxButtonModule, DxProgressBarModule, DxLoadIndicatorModule],
+  imports: [DxButtonModule, DxProgressBarModule, DxLoadIndicatorModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductComponent {
   productId = input<number | undefined>(undefined);

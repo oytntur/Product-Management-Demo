@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { filter, switchMap, take } from 'rxjs';
@@ -54,6 +54,7 @@ type OrderForm = {
     DxDateBoxModule,
     DxButtonModule,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductEditComponent {
   // Route param veya parent’tan gelecek id

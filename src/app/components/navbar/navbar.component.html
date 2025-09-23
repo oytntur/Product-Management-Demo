@@ -1,6 +1,6 @@
 <nav
   class="navbar navbar-expand-sm navbar-light bg-primary px-2 d-flex justify-content-between align-items-center"
 >
-  <ng-container *ngComponentOutlet="getPageHeaderComponent()"></ng-container>
-  <span>{{ currentUser()?.fullName }}</span>
+  <ng-container *ngComponentOutlet="headerComponent()"></ng-container>
+  <span class="navbar-text">{{ currentUser()?.fullName }}</span>
 </nav>

@@ -1,27 +1,75 @@
-<div class="login-page">
-  <h2>Login Page</h2>
-  <form [formGroup]="loginForm">
-    <div class="mb-3">
-      <dx-text-box
-        mode="email"
-        label="Email"
-        labelMode="floating"
-        formControlName="email"
-        aria-describedby="emailHelpId"
-        placeholder="abc@mail.com"
-      />
-    </div>
-    <div class="mb-3">
-      <dx-text-box
-        mode="password"
-        label="Password"
-        labelMode="floating"
-        formControlName="password"
-        aria-describedby="passwordHelpId"
-        placeholder="Password"
-      />
-    </div>
+<section class="login">
+  <div class="login__card">
+    <header class="login__header">
+      <h1 class="login__title">Giriş Yap</h1>
+      <p class="login__subtitle text-muted">Devam etmek için hesabınıza giriş yapın.</p>
+    </header>
 
-    <dx-button type="warning" (click)="onSubmit()">Submit</dx-button>
-  </form>
-</div>
+    <form [formGroup]="loginForm" (ngSubmit)="submit()" novalidate class="login__form">
+      @if (errorMessage(); as message) {
+      <div class="alert alert-danger" role="alert">
+        {{ message }}
+      </div>
+      }
+
+      <div class="mb-3">
+        <label for="email" class="form-label">E-posta</label>
+        <input
+          type="email"
+          id="email"
+          class="form-control"
+          formControlName="email"
+          [ngClass]="{
+            'is-invalid': loginForm.controls.email.invalid && loginForm.controls.email.touched
+          }"
+          autocomplete="email"
+          placeholder="ornek@firma.com"
+        />
+        @if (loginForm.controls.email.invalid && loginForm.controls.email.touched) {
+        <div class="invalid-feedback">Lütfen geçerli bir e-posta adresi girin.</div>
+        }
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">Şifre</label>
+        <input
+          type="password"
+          id="password"
+          class="form-control"
+          formControlName="password"
+          [ngClass]="{
+            'is-invalid': loginForm.controls.password.invalid && loginForm.controls.password.touched
+          }"
+          autocomplete="current-password"
+          placeholder="••••••"
+        />
+        @if (loginForm.controls.password.invalid && loginForm.controls.password.touched) {
+        <div class="invalid-feedback">Şifre en az 6 karakter olmalıdır.</div>
+        }
+      </div>
+
+      <div class="form-check mb-3">
+        <input
+          type="checkbox"
+          id="rememberMe"
+          class="form-check-input"
+          formControlName="rememberMe"
+        />
+        <label class="form-check-label" for="rememberMe">Beni hatırla</label>
+      </div>
+
+      <button class="btn btn-primary w-100" type="submit">
+        @if (isSubmitting()) {
+        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+        } Giriş Yap
+      </button>
+    </form>
+
+    <footer class="login__footer">
+      <small class="text-muted">
+        Henüz hesabınız yok mu?
+        <a routerLink="/auth/register" class="link-primary">Kayıt olun</a>
+      </small>
+    </footer>
+  </div>
+</section>

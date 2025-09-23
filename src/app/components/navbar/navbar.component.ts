@@ -1,34 +1,38 @@
-import { JsonPipe, NgComponentOutlet } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { NgComponentOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, map, startWith } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { NavbarProductSelectComponent } from './navbar-product-select.component';
 import { NavbarHeaderTextComponent } from './navbar-header-text.component';
 import { AuthService } from '../../helpers/services/auth.service';
 
 @Component({
   selector: 'app-navbar',
+  standalone: true,
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
   imports: [NgComponentOutlet],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent {
-  router = inject(Router);
-  activatedRoute = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
 
-  productId = signal<number | null>(null);
+  private readonly currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      map((event) => event.urlAfterRedirects),
+      startWith(this.router.url)
+    ),
+    { initialValue: this.router.url }
+  );
 
-  authService = inject(AuthService);
+  readonly headerComponent = computed(() =>
+    this.currentUrl().startsWith('/admin/products/')
+      ? NavbarProductSelectComponent
+      : NavbarHeaderTextComponent
+  );
 
-  currentUser = this.authService.authedUser;
-
-  constructor() {}
-
-  getPageHeaderComponent() {
-    const route = this.activatedRoute.snapshot;
-    const router = this.router;
-    if (router.url.startsWith('/admin/products/')) {
-      return NavbarProductSelectComponent;
-    }
-    return NavbarHeaderTextComponent;
-  }
+  readonly currentUser = this.authService.authedUser;
 }
