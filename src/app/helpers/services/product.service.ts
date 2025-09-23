@@ -14,7 +14,7 @@ export class ProductService {
     return this.httpClient.get<Product[]>(`${this.apiConfig.URL}/products`);
   }
   getProductById(id: number): Observable<Product> {
-    return this.httpClient.get<Product>(`${this.apiConfig.URL}/products/${id}`).pipe(delay(5000));
+    return this.httpClient.get<Product>(`${this.apiConfig.URL}/products/${id}`);
   }
 
   updateProduct(product: Product): Observable<Product> {

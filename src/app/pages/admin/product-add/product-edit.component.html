@@ -1,150 +1,282 @@
-<!-- TODO: Update the form with DevExtreme components later -->
-<form [formGroup]="form" (ngSubmit)="submit()" class="space-y-6">
-  <fieldset formGroupName="product" class="border p-4 rounded">
+<form [formGroup]="form" (ngSubmit)="submit()" class="product-form">
+  <fieldset formGroupName="product" class="border p-4 rounded product-fieldset">
     <legend>Product</legend>
 
-    <div class="grid" style="grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
-      <label>
-        <div>Name *</div>
-        <input formControlName="name" />
-      </label>
+    <div class="form-grid">
+      <div class="form-grid-item">
+        <dx-text-box
+          formControlName="name"
+          label="Name *"
+          labelMode="floating"
+          [showClearButton]="true"
+        ></dx-text-box>
+      </div>
 
-      <label>
-        <div>Quantity Per Unit *</div>
-        <input formControlName="quantityPerUnit" />
-      </label>
+      <div class="form-grid-item">
+        <dx-text-box
+          formControlName="quantityPerUnit"
+          label="Quantity Per Unit *"
+          labelMode="floating"
+          [showClearButton]="true"
+        ></dx-text-box>
+      </div>
 
-      <label>
-        <div>Unit Price *</div>
-        <input type="number" formControlName="unitPrice" />
-      </label>
+      <div class="form-grid-item">
+        <dx-number-box
+          formControlName="unitPrice"
+          label="Unit Price *"
+          labelMode="floating"
+          [showSpinButtons]="true"
+          [min]="0"
+        ></dx-number-box>
+      </div>
 
-      <label>
-        <div>Units In Stock</div>
-        <input type="number" formControlName="unitsInStock" />
-      </label>
+      <div class="form-grid-item">
+        <dx-number-box
+          formControlName="unitsInStock"
+          label="Units In Stock"
+          labelMode="floating"
+          [showSpinButtons]="true"
+          [min]="0"
+        ></dx-number-box>
+      </div>
 
-      <label>
-        <div>Units On Order</div>
-        <input type="number" formControlName="unitsOnOrder" />
-      </label>
+      <div class="form-grid-item">
+        <dx-number-box
+          formControlName="unitsOnOrder"
+          label="Units On Order"
+          labelMode="floating"
+          [showSpinButtons]="true"
+          [min]="0"
+        ></dx-number-box>
+      </div>
 
-      <label>
-        <div>Reorder Level</div>
-        <input type="number" formControlName="reorderLevel" />
-      </label>
+      <div class="form-grid-item">
+        <dx-number-box
+          formControlName="reorderLevel"
+          label="Reorder Level"
+          labelMode="floating"
+          [showSpinButtons]="true"
+          [min]="0"
+        ></dx-number-box>
+      </div>
 
-      <label style="grid-column: span 2 / span 2">
-        <input type="checkbox" formControlName="discontinued" />
-        <span style="margin-left: 8px">Discontinued</span>
-      </label>
+      <div class="form-grid-full discontinued-field">
+        <dx-check-box formControlName="discontinued" text="Discontinued"></dx-check-box>
+      </div>
     </div>
   </fieldset>
 
-  <section class="border p-4 rounded">
-    <div class="flex items-center justify-between">
+  <section class="border p-4 rounded orders-section">
+    <div class="orders-header">
       <legend>Orders (optional)</legend>
-      <button type="button" (click)="addOrder()">Add Order</button>
+      <dx-button text="Add Order" icon="add" type="default" (onClick)="addOrder()"></dx-button>
     </div>
 
-    <div formArrayName="orders" class="space-y-4">
+    <div formArrayName="orders" class="orders-list">
       <div
         *ngFor="let orderFG of ordersFA.controls; let i = index"
         [formGroupName]="i"
-        class="border rounded p-3"
+        class="border rounded p-3 order-card"
       >
-        <div class="flex items-center justify-between">
+        <div class="order-card-header">
           <h4>Order #{{ i + 1 }}</h4>
-          <button type="button" (click)="removeOrder(i)">Remove</button>
+          <dx-button
+            text="Remove"
+            type="danger"
+            icon="trash"
+            stylingMode="text"
+            (onClick)="removeOrder(i)"
+          ></dx-button>
         </div>
 
-        <div class="grid" style="grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
-          <label>
-            <div>Customer Id</div>
-            <input formControlName="customerId" />
-          </label>
+        <div class="order-grid">
+          <div class="order-grid-item">
+            <dx-text-box
+              formControlName="customerId"
+              label="Customer Id"
+              labelMode="floating"
+              [showClearButton]="true"
+            ></dx-text-box>
+          </div>
 
-          <label>
-            <div>Employee Id</div>
-            <input type="number" formControlName="employeeId" />
-          </label>
+          <div class="order-grid-item">
+            <dx-number-box
+              formControlName="employeeId"
+              label="Employee Id"
+              labelMode="floating"
+              [showSpinButtons]="true"
+            ></dx-number-box>
+          </div>
 
-          <label>
-            <div>Order Date</div>
-            <input type="date" formControlName="orderDate" />
-          </label>
+          <div class="order-grid-item">
+            <dx-date-box
+              formControlName="orderDate"
+              label="Order Date"
+              labelMode="floating"
+              type="date"
+              dateSerializationFormat="yyyy-MM-dd"
+            ></dx-date-box>
+          </div>
 
-          <label>
-            <div>Required Date</div>
-            <input type="date" formControlName="requiredDate" />
-          </label>
+          <div class="order-grid-item">
+            <dx-date-box
+              formControlName="requiredDate"
+              label="Required Date"
+              labelMode="floating"
+              type="date"
+              dateSerializationFormat="yyyy-MM-dd"
+            ></dx-date-box>
+          </div>
 
-          <label>
-            <div>Shipped Date</div>
-            <input type="date" formControlName="shippedDate" />
-          </label>
+          <div class="order-grid-item">
+            <dx-date-box
+              formControlName="shippedDate"
+              label="Shipped Date"
+              labelMode="floating"
+              type="date"
+              dateSerializationFormat="yyyy-MM-dd"
+            ></dx-date-box>
+          </div>
 
-          <label>
-            <div>Ship Via</div>
-            <input type="number" formControlName="shipVia" />
-          </label>
+          <div class="order-grid-item">
+            <dx-number-box
+              formControlName="shipVia"
+              label="Ship Via"
+              labelMode="floating"
+              [showSpinButtons]="true"
+            ></dx-number-box>
+          </div>
 
-          <label>
-            <div>Freight</div>
-            <input type="number" formControlName="freight" />
-          </label>
+          <div class="order-grid-item">
+            <dx-number-box
+              formControlName="freight"
+              label="Freight"
+              labelMode="floating"
+              [showSpinButtons]="true"
+              [min]="0"
+            ></dx-number-box>
+          </div>
 
-          <label>
-            <div>Ship Name</div>
-            <input formControlName="shipName" />
-          </label>
+          <div class="order-grid-item">
+            <dx-text-box
+              formControlName="shipName"
+              label="Ship Name"
+              labelMode="floating"
+              [showClearButton]="true"
+            ></dx-text-box>
+          </div>
         </div>
 
-        <fieldset formGroupName="shipAddress" class="border p-3 rounded mt-3">
+        <fieldset formGroupName="shipAddress" class="border p-3 rounded ship-address">
           <legend>Ship Address</legend>
-          <div class="grid" style="grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
-            <label>
-              <div>Street</div>
-              <input formControlName="street" />
-            </label>
-            <label>
-              <div>City</div>
-              <input formControlName="city" />
-            </label>
-            <label>
-              <div>Region</div>
-              <input formControlName="region" />
-            </label>
-            <label>
-              <div>Postal Code</div>
-              <input type="number" formControlName="postalCode" />
-            </label>
-            <label>
-              <div>Country</div>
-              <input formControlName="country" />
-            </label>
+          <div class="address-grid">
+            <div class="address-grid-item">
+              <dx-text-box
+                formControlName="street"
+                label="Street"
+                labelMode="floating"
+                [showClearButton]="true"
+              ></dx-text-box>
+            </div>
+
+            <div class="address-grid-item">
+              <dx-text-box
+                formControlName="city"
+                label="City"
+                labelMode="floating"
+                [showClearButton]="true"
+              ></dx-text-box>
+            </div>
+
+            <div class="address-grid-item">
+              <dx-text-box
+                formControlName="region"
+                label="Region"
+                labelMode="floating"
+                [showClearButton]="true"
+              ></dx-text-box>
+            </div>
+
+            <div class="address-grid-item">
+              <dx-number-box
+                formControlName="postalCode"
+                label="Postal Code"
+                labelMode="floating"
+                [showSpinButtons]="true"
+              ></dx-number-box>
+            </div>
+
+            <div class="address-grid-item">
+              <dx-text-box
+                formControlName="country"
+                label="Country"
+                labelMode="floating"
+                [showClearButton]="true"
+              ></dx-text-box>
+            </div>
           </div>
         </fieldset>
 
-        <div class="mt-3 border rounded p-3">
-          <div class="flex items-center justify-between">
+        <div class="border rounded p-3 details-card">
+          <div class="details-header">
             <h5>Details</h5>
-            <button type="button" (click)="addDetail(i)">Add Detail</button>
+            <dx-button
+              text="Add Detail"
+              icon="add"
+              type="default"
+              stylingMode="text"
+              (onClick)="addDetail(i)"
+            ></dx-button>
           </div>
 
-          <div formArrayName="details" class="space-y-2 mt-2">
+          <div formArrayName="details" class="details-list">
             <div
               *ngFor="let d of getDetailsFA(i).controls; let j = index"
               [formGroupName]="j"
-              class="grid"
-              style="grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px"
+              class="details-grid"
             >
-              <input placeholder="Product Id" formControlName="productId" />
-              <input type="number" placeholder="Unit Price" formControlName="unitPrice" />
-              <input type="number" placeholder="Quantity" formControlName="quantity" />
-              <input type="number" placeholder="Discount (0-1)" formControlName="discount" />
-              <div style="grid-column: 1 / -1; text-align: right">
-                <button type="button" (click)="removeDetail(i, j)">Remove Detail</button>
+              <dx-number-box
+                formControlName="productId"
+                label="Product Id"
+                labelMode="floating"
+                [showSpinButtons]="true"
+              ></dx-number-box>
+
+              <dx-number-box
+                formControlName="unitPrice"
+                label="Unit Price"
+                labelMode="floating"
+                [showSpinButtons]="true"
+                [min]="0"
+              ></dx-number-box>
+
+              <dx-number-box
+                formControlName="quantity"
+                label="Quantity"
+                labelMode="floating"
+                [showSpinButtons]="true"
+                [min]="1"
+              ></dx-number-box>
+
+              <dx-number-box
+                formControlName="discount"
+                label="Discount (0-1)"
+                labelMode="floating"
+                [showSpinButtons]="true"
+                [min]="0"
+                [max]="1"
+                [step]="0.05"
+              ></dx-number-box>
+
+              <div class="details-actions">
+                <dx-button
+                  text="Remove Detail"
+                  type="danger"
+                  stylingMode="text"
+                  icon="trash"
+                  (onClick)="removeDetail(i, j)"
+                ></dx-button>
               </div>
             </div>
           </div>
@@ -154,6 +286,10 @@
   </section>
 
   <div class="flex gap-3">
-    <button type="submit">{{ isEdit() ? 'Update' : 'Create' }}</button>
+    <dx-button
+      [text]="isEdit() ? 'Update' : 'Create'"
+      type="success"
+      [useSubmitBehavior]="true"
+    ></dx-button>
   </div>
 </form>

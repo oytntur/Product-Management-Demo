@@ -2,6 +2,11 @@ import { Component, computed, effect, inject, input, signal } from '@angular/cor
 import { FormArray, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { filter, switchMap, take } from 'rxjs';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
+import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
+import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
+import { DxButtonModule } from 'devextreme-angular/ui/button';
 
 import { ProductService } from '../../../helpers/services/product.service';
 import { Product } from '../../../helpers/models/product.model';
@@ -27,9 +32,9 @@ type OrderForm = {
   id: number | null;
   customerId: string;
   employeeId: number | null;
-  orderDate: string;
-  requiredDate: string;
-  shippedDate: string;
+  orderDate: string | null;
+  requiredDate: string | null;
+  shippedDate: string | null;
   shipVia: number | null;
   freight: number;
   shipName: string;
@@ -42,7 +47,15 @@ type OrderForm = {
   standalone: true,
   templateUrl: './product-edit.component.html',
   styleUrls: ['./product-edit.component.scss'],
-  imports: [ReactiveFormsModule, NgFor],
+  imports: [
+    ReactiveFormsModule,
+    NgFor,
+    DxTextBoxModule,
+    DxNumberBoxModule,
+    DxCheckBoxModule,
+    DxDateBoxModule,
+    DxButtonModule,
+  ],
 })
 export class ProductEditComponent {
   // Route param veya parent’tan gelecek id
@@ -119,9 +132,9 @@ export class ProductEditComponent {
       id: [seed?.id ?? null],
       customerId: [seed?.customerId ?? ''],
       employeeId: [seed?.employeeId ?? null],
-      orderDate: [seed?.orderDate ?? ''],
-      requiredDate: [seed?.requiredDate ?? ''],
-      shippedDate: [seed?.shippedDate ?? ''],
+      orderDate: [seed?.orderDate ?? null],
+      requiredDate: [seed?.requiredDate ?? null],
+      shippedDate: [seed?.shippedDate ?? null],
       shipVia: [seed?.shipVia ?? null],
       freight: [seed?.freight ?? 0, [Validators.min(0)]],
       shipName: [seed?.shipName ?? ''],

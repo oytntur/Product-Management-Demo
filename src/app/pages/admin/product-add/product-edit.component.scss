@@ -1,0 +1,83 @@
+@use 'sass:map';
+
+:host {
+  display: block;
+}
+
+.product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.product-fieldset,
+.orders-section,
+.order-card,
+.details-card,
+.ship-address {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.orders-header,
+.order-card-header,
+.details-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.orders-list,
+.details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-grid,
+.order-grid,
+.address-grid,
+.details-grid {
+  display: grid;
+}
+
+.form-grid,
+.order-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.address-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.details-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.form-grid-full {
+  grid-column: 1 / -1;
+}
+
+.discontinued-field {
+  display: flex;
+  align-items: center;
+}
+
+.details-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+:host ::ng-deep .dx-widget {
+  width: 100%;
+}
+
+:host ::ng-deep .dx-checkbox {
+  width: auto;
+}
