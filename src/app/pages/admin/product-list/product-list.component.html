@@ -15,6 +15,7 @@
   ]"
   [showBorders]="true"
   keyExpr="id"
+  (onRowUpdated)="updateProduct($event)"
 >
   <dxo-filter-row [visible]="true"></dxo-filter-row>
   <dxo-search-panel [visible]="true" />
@@ -27,8 +28,8 @@
   <dxi-column dataField="unitsOnOrder" caption="Units On Order" />
   <dxi-column dataField="reorderLevel" caption="Reorder Level" />
   <dxi-column dataField="discontinued" caption="Discontinued" dataType="boolean" />
-  <dxi-column type="buttons">
+  <!-- <dxi-column type="buttons">
     <dxi-button hint="Open" text="Open" [onClick]="goToDetail"></dxi-button>
-  </dxi-column>
+  </dxi-column> -->
   <dxo-editing mode="row" [allowUpdating]="true" [allowDeleting]="true" [allowAdding]="true" />
 </dx-data-grid>

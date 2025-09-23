@@ -7,7 +7,7 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-admin-layout',
   template: `
     <app-navbar></app-navbar>
-    <main class="container my-4">
+    <main class="container">
       <router-outlet></router-outlet>
     </main>
     <app-footer></app-footer>
