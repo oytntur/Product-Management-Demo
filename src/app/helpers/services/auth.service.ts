@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { CurrentUser } from '../models';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
@@ -9,6 +9,8 @@ export class AuthService {
   constructor() {}
   http = inject(HttpClient);
 
+  authedUser = signal<CurrentUser | null | undefined>(undefined);
+
   get currentUser(): CurrentUser | null | undefined {
     const userJson = localStorage.getItem('currentUser');
     return userJson ? (JSON.parse(userJson) as CurrentUser) : null;
@@ -17,8 +19,10 @@ export class AuthService {
   set currentUser(user: CurrentUser | null | undefined) {
     if (user) {
       localStorage.setItem('currentUser', JSON.stringify(user));
+      this.authedUser.set(user);
     } else {
       localStorage.removeItem('currentUser');
+      this.authedUser.set(null);
     }
   }
 
@@ -28,6 +32,7 @@ export class AuthService {
         login(loginInput: $loginInput) {
           id
           email
+          fullName
           accessToken
           refreshToken
         }
@@ -50,7 +55,6 @@ export class AuthService {
       .then((response) => {
         const user = response.data.login as CurrentUser;
         this.currentUser = user;
-
         return user;
       })
       .catch((error) => {

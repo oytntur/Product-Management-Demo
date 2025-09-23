@@ -3,6 +3,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NavbarProductSelectComponent } from './navbar-product-select.component';
 import { NavbarHeaderTextComponent } from './navbar-header-text.component';
+import { AuthService } from '../../helpers/services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -15,6 +16,10 @@ export class NavbarComponent {
   activatedRoute = inject(ActivatedRoute);
 
   productId = signal<number | null>(null);
+
+  authService = inject(AuthService);
+
+  currentUser = this.authService.authedUser;
 
   constructor() {}
 

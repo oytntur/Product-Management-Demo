@@ -1,2 +1,156 @@
-<h2>Admin Home Page</h2>
-<button (click)="login()">Login</button>
+<section class="dashboard">
+  @if (dashboard$ | async; as dashboard) {
+  <header class="dashboard__header">
+    <div>
+      <h1 class="dashboard__title">
+        Welcome{{ currentUser?.fullName ? ' ' + currentUser?.fullName : '' }}
+      </h1>
+      <p class="dashboard__subtitle text-muted mb-0">
+        Here is a quick overview of your store performance today.
+      </p>
+    </div>
+  </header>
+
+  <div class="dashboard__summary-grid">
+    @for (card of dashboard.summary; track card.label) {
+    <article class="card metric-card border-0 shadow-sm">
+      <div class="card-body">
+        <div class="metric-card__icon text-{{ card.variant }}">
+          <i [class]="card.icon"></i>
+        </div>
+        <div class="metric-card__value">
+          @switch (card.format) { @case ('currency') {
+          <span>{{ card.value | currency : 'USD' : 'symbol' : '1.0-0' }}</span>
+          } @default {
+          <span>{{ card.value | number : '1.0-0' }}</span>
+          } }
+        </div>
+        <p class="metric-card__label text-muted mb-1">{{ card.label }}</p>
+        <small class="text-muted">{{ card.caption }}</small>
+      </div>
+    </article>
+    }
+  </div>
+
+  <div class="dashboard__content-grid">
+    <section class="card shadow-sm dashboard__panel">
+      <div
+        class="card-header bg-transparent d-flex flex-wrap gap-2 justify-content-between align-items-center"
+      >
+        <h2 class="card-title h6 mb-0">Low Stock Watchlist</h2>
+        <a routerLink="/admin/products" class="btn btn-sm btn-outline-primary">Manage Products</a>
+      </div>
+      <div class="card-body p-0">
+        @if (dashboard.lowStock.length) {
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col">Product</th>
+                <th scope="col" class="text-center">In Stock</th>
+                <th scope="col" class="text-center">Reorder Level</th>
+                <th scope="col" class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (product of dashboard.lowStock; track product.id) {
+              <tr>
+                <td>
+                  <div class="fw-semibold">{{ product.name }}</div>
+                  <small class="text-muted">ID #{{ product.id }}</small>
+                </td>
+                <td class="text-center">
+                  <span
+                    class="badge"
+                    [ngClass]="{
+                      'bg-danger': product.status === 'critical',
+                      'bg-warning text-dark': product.status === 'warning'
+                    }"
+                  >
+                    {{ product.unitsInStock }}
+                  </span>
+                </td>
+                <td class="text-center">{{ product.reorderLevel }}</td>
+                <td class="text-end">
+                  <a [routerLink]="['/admin/products', product.id]" class="btn btn-link btn-sm"
+                    >View</a
+                  >
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        } @else {
+        <div class="dashboard__empty-state text-muted">
+          <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+          <p class="mb-0">All products are above their reorder thresholds.</p>
+        </div>
+        }
+      </div>
+    </section>
+
+    <aside class="dashboard__sidebar">
+      <section class="card shadow-sm dashboard__panel">
+        <div
+          class="card-header bg-transparent d-flex flex-wrap gap-2 justify-content-between align-items-center"
+        >
+          <h2 class="card-title h6 mb-0">Recent Orders</h2>
+          <span class="badge bg-light text-dark">{{ dashboard.recentOrders.length }} shown</span>
+        </div>
+        <div class="card-body">
+          @if (dashboard.recentOrders.length) {
+          <ul class="recent-orders list-unstyled mb-0">
+            @for (order of dashboard.recentOrders; track order.id) {
+            <li class="recent-orders__item">
+              <div class="recent-orders__meta">
+                <span class="recent-orders__id">#{{ order.id }}</span>
+                <span class="recent-orders__date">{{ order.date | date : 'mediumDate' }}</span>
+              </div>
+              <div class="recent-orders__customer">{{ order.customer }}</div>
+              <div class="recent-orders__footer">
+                <span class="recent-orders__total">
+                  {{ order.total | currency : 'USD' : 'symbol' : '1.0-0' }}
+                </span>
+                <span
+                  class="badge"
+                  [ngClass]="{
+                    'bg-success': order.status === 'Shipped',
+                    'bg-warning text-dark': order.status === 'Pending'
+                  }"
+                >
+                  {{ order.status }}
+                </span>
+              </div>
+            </li>
+            }
+          </ul>
+          } @else {
+          <div class="dashboard__empty-state text-muted">
+            <p class="mb-0">No orders available yet.</p>
+          </div>
+          }
+        </div>
+      </section>
+
+      <section class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="card-title h6 mb-3">Quick Actions</h2>
+          <div class="d-grid gap-2">
+            <a routerLink="/admin/products" class="btn btn-outline-primary btn-sm">View Products</a>
+            <a routerLink="/admin/products" class="btn btn-outline-success btn-sm">Add Product</a>
+            <a routerLink="/admin/products" class="btn btn-outline-secondary btn-sm"
+              >Inventory Report</a
+            >
+          </div>
+        </div>
+      </section>
+    </aside>
+  </div>
+  } @else {
+  <div class="dashboard__loading text-muted">
+    <div class="spinner-border text-primary mb-3" role="status"></div>
+    <p class="mb-0">Loading dashboard data...</p>
+  </div>
+  }
+</section>
