@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { API_CONFIG } from '../tokens';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { Product } from '../models/product.model';
 
 @Injectable()
@@ -18,9 +18,11 @@ export class ProductService {
   }
 
   updateProduct(product: Product): Observable<Product> {
-    return this.httpClient.put<Product>(`${this.apiConfig.URL}/products/${product.id}`, product);
+    return this.httpClient
+      .put<Product>(`${this.apiConfig.URL}/products/${product.id}`, product)
+      .pipe(take(1));
   }
   createProduct(product: Product): Observable<Product> {
-    return this.httpClient.post<Product>(`${this.apiConfig.URL}/products`, product);
+    return this.httpClient.post<Product>(`${this.apiConfig.URL}/products`, product).pipe(take(1));
   }
 }

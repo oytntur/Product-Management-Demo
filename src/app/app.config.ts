@@ -10,6 +10,7 @@ import { API_CONFIG } from './helpers/tokens';
 import { ProductService } from './helpers/services/product.service';
 import { AuthService } from './helpers/services/auth.service';
 import { provideHttpClient } from '@angular/common/http';
+import { OrderService } from './helpers/services/order.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -27,5 +28,6 @@ export const appConfig: ApplicationConfig = {
     },
     ProductService,
     AuthService,
+    OrderService,
   ],
 };
