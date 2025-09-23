@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { DxSelectBoxModule } from 'devextreme-angular';
 import { ProductService } from '../../helpers/services/product.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -25,17 +25,21 @@ export class NavbarProductSelectComponent {
   productService = inject(ProductService);
   products$ = this.productService.getProducts().pipe(takeUntilDestroyed());
 
-  currentProductId = input.required<number>();
   router = inject(Router);
+
+  currentProductId = computed(() => {
+    //get productId from current url
+    const url = this.router.url;
+    const match = url.match(/products\/(\d+)/);
+    return match ? Number(match[1]) : null;
+  });
 
   onProductSelected(event: any) {
     const selectedProductId = event.value;
     //get current route and replace productId parameter
     const currentUrl = this.router.url;
-    console.log('Current URL:', currentUrl);
 
     const newUrl = currentUrl.replace(/products\/\d+/, `products/${selectedProductId}`);
     this.router.navigateByUrl(newUrl);
-    console.log('Selected product ID:', selectedProductId);
   }
 }

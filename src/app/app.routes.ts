@@ -6,11 +6,13 @@ export const routes: Routes = [
     children: [
       {
         path: 'login',
+        title: 'Login',
         loadComponent: () =>
           import('./pages/auth/login/login.component').then((m) => m.LoginComponent),
       },
       {
         path: 'register',
+        title: 'Register',
         loadComponent: () =>
           import('./pages/auth/register/register.component').then((m) => m.RegisterComponent),
       },
@@ -18,7 +20,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    data: { breadcrumb: 'Admin' },
+    title: 'Admin',
     loadComponent: () =>
       import('./helpers/layout/admin-layout/admin-layout.component').then(
         (m) => m.AdminLayoutComponent
@@ -26,13 +28,13 @@ export const routes: Routes = [
     children: [
       {
         path: 'home',
-        data: { breadcrumb: 'Home' },
+        title: 'Home',
         loadComponent: () =>
           import('./pages/admin/home/home.component').then((m) => m.HomeComponent),
       },
       {
         path: 'products',
-        data: { breadcrumb: 'Products' },
+        title: 'Products',
         loadComponent: () =>
           import('./pages/admin/product-list/product-list.component').then(
             (m) => m.ProductListComponent
@@ -40,13 +42,13 @@ export const routes: Routes = [
       },
       {
         path: 'products/:productId',
-        data: { breadcrumb: 'Product Details' },
+        title: 'Product Details',
         loadComponent: () =>
           import('./pages/admin/product/product.component').then((m) => m.ProductComponent),
       },
       {
         path: 'products/:productId/edit',
-        data: { breadcrumb: 'Edit Product' },
+        title: 'Edit Product',
         loadComponent: () =>
           import('./pages/admin/product-add/product-edit.component').then(
             (m) => m.ProductEditComponent
