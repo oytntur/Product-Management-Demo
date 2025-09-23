@@ -13,4 +13,14 @@ export class ProductService {
   getProducts(): Observable<Product[]> {
     return this.httpClient.get<Product[]>(`${this.apiConfig.URL}/products`);
   }
+  getProductById(id: number): Observable<Product> {
+    return this.httpClient.get<Product>(`${this.apiConfig.URL}/products/${id}`);
+  }
+
+  updateProduct(product: Product): Observable<Product> {
+    return this.httpClient.put<Product>(`${this.apiConfig.URL}/products/${product.id}`, product);
+  }
+  createProduct(product: Product): Observable<Product> {
+    return this.httpClient.post<Product>(`${this.apiConfig.URL}/products`, product);
+  }
 }

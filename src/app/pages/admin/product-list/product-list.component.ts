@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { DxDataGridModule } from 'devextreme-angular';
+import { DxButtonComponent, DxDataGridModule } from 'devextreme-angular';
 import { ProductService } from '../../../helpers/services/product.service';
 import { AsyncPipe, JsonPipe } from '@angular/common';
 
@@ -7,7 +7,7 @@ import { AsyncPipe, JsonPipe } from '@angular/common';
   selector: 'app-admin-product-list',
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss'],
-  imports: [DxDataGridModule, AsyncPipe],
+  imports: [DxDataGridModule, AsyncPipe, DxButtonComponent],
 })
 export class ProductListComponent {
   productsService = inject(ProductService);
@@ -15,5 +15,9 @@ export class ProductListComponent {
 
   goToDetail(event: any) {
     console.log(event.row.data);
+  }
+
+  addNewProduct() {
+    console.log('Add new product clicked');
   }
 }

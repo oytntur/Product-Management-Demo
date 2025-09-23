@@ -1,4 +1,5 @@
 <h2>Admin Product List Page</h2>
+<dx-button text="Add New Product" (onClick)="addNewProduct()"></dx-button>
 <dx-data-grid
   [dataSource]="products | async"
   [columns]="[
