@@ -1,4 +1,27 @@
 <div class="login-page">
   <h2>Login Page</h2>
-  <!-- Add your login form here -->
+  <form [formGroup]="loginForm">
+    <div class="mb-3">
+      <dx-text-box
+        mode="email"
+        label="Email"
+        labelMode="floating"
+        formControlName="email"
+        aria-describedby="emailHelpId"
+        placeholder="abc@mail.com"
+      />
+    </div>
+    <div class="mb-3">
+      <dx-text-box
+        mode="password"
+        label="Password"
+        labelMode="floating"
+        formControlName="password"
+        aria-describedby="passwordHelpId"
+        placeholder="Password"
+      />
+    </div>
+
+    <dx-button type="warning" (click)="onSubmit()">Submit</dx-button>
+  </form>
 </div>
