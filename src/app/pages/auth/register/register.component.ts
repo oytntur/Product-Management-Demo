@@ -18,7 +18,7 @@ import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
   imports: [ReactiveFormsModule, DxTextBoxComponent, DxButtonComponent],
 })
 export class RegisterComponent {
-  // Custom validator for password confirmation
+  // TODO:move this to a separate file
   passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');
