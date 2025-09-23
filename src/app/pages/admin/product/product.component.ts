@@ -1,9 +1,10 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ProductService } from '../../../helpers/services/product.service';
-import { switchMap } from 'rxjs';
+import { finalize, switchMap, tap } from 'rxjs';
 import { AsyncPipe, JsonPipe } from '@angular/common';
 import { DxButtonModule, DxProgressBarModule, DxLoadIndicatorModule } from 'devextreme-angular';
+import { Product } from '../../../helpers/models/product.model';
 
 @Component({
   selector: 'app-admin-product',
@@ -16,15 +17,27 @@ export class ProductComponent {
   productId$ = toObservable(this.productId);
 
   productService = inject(ProductService);
+  isLoading = signal(false);
 
-  product$ = this.productId$.pipe(
-    takeUntilDestroyed(),
-    switchMap((id) => {
-      if (id) {
-        return this.productService.getProductById(id);
-      } else {
-        return [null];
-      }
-    })
-  );
+  product = signal<Product | null>(null);
+
+  constructor() {
+    this.productId$
+      .pipe(
+        takeUntilDestroyed(),
+        tap(() => {
+          this.isLoading.set(true);
+          this.product.set(null);
+        }),
+        switchMap((id) => {
+          if (id) {
+            return this.productService.getProductById(id);
+          } else {
+            return [null];
+          }
+        }),
+        finalize(() => this.isLoading.set(false))
+      )
+      .subscribe((product) => this.product.set(product));
+  }
 }

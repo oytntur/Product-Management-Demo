@@ -1,5 +1,5 @@
 <div class="container-fluid py-4">
-  @if (product$ | async; as product) {
+  @if (product(); as product) {
   <div class="row">
     <!-- Product Header -->
     <div class="col-12 mb-4">
@@ -109,7 +109,6 @@
                   {{ product.unitsInStock }}
                 </span>
               </div>
-
               <dx-progress-bar
                 [min]="0"
                 [max]="(product.unitsInStock + product.reorderLevel) * 2"
@@ -179,7 +178,7 @@
 
             <dx-button
               text="View Orders"
-              type="default"
+              type="normal"
               stylingMode="outlined"
               icon="cart"
               [width]="130"
@@ -187,8 +186,8 @@
 
             <dx-button
               text="Analytics"
-              type="default"
-              stylingMode="outlined"
+              type="normal"
+              stylingMode="text"
               icon="chart"
               [width]="110"
             ></dx-button>
@@ -205,10 +204,18 @@
       </div>
     </div>
   </div>
+  } @else { @if(isLoading()){
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body text-center py-5">
+          <dx-load-indicator [visible]="true" [height]="60" [width]="60"></dx-load-indicator>
+          <p class="mt-3 text-muted">Loading product details...</p>
+        </div>
+      </div>
+    </div>
+  </div>
   } @else {
-  <!-- Loading and No Product States -->
-  @if ((product$ | async) === null) {
-  <!-- No Product Template -->
   <div class="row">
     <div class="col-12">
       <div class="card shadow-sm">
@@ -222,18 +229,6 @@
             stylingMode="contained"
             icon="bulletlist"
           ></dx-button>
-        </div>
-      </div>
-    </div>
-  </div>
-  } @else {
-  <!-- Loading Template with DevExtreme LoadIndicator -->
-  <div class="row">
-    <div class="col-12">
-      <div class="card shadow-sm">
-        <div class="card-body text-center py-5">
-          <dx-load-indicator [visible]="true" [height]="60" [width]="60"></dx-load-indicator>
-          <p class="mt-3 text-muted">Loading product details...</p>
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { API_CONFIG } from '../tokens';
-import { Observable, take } from 'rxjs';
+import { delay, Observable, take } from 'rxjs';
 import { Product } from '../models/product.model';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class ProductService {
     return this.httpClient.get<Product[]>(`${this.apiConfig.URL}/products`);
   }
   getProductById(id: number): Observable<Product> {
-    return this.httpClient.get<Product>(`${this.apiConfig.URL}/products/${id}`);
+    return this.httpClient.get<Product>(`${this.apiConfig.URL}/products/${id}`).pipe(delay(5000));
   }
 
   updateProduct(product: Product): Observable<Product> {
