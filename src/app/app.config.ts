@@ -6,7 +6,7 @@ import {
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { API_CONFIG } from './helpers/tokens/api.token';
+import { API_CONFIG } from './helpers/tokens';
 
 export const appConfig: ApplicationConfig = {
   providers: [
