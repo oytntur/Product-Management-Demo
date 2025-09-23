@@ -9,7 +9,18 @@ export class AuthService {
   constructor() {}
   http = inject(HttpClient);
 
-  currentUser?: CurrentUser;
+  get currentUser(): CurrentUser | null | undefined {
+    const userJson = localStorage.getItem('currentUser');
+    return userJson ? (JSON.parse(userJson) as CurrentUser) : null;
+  }
+
+  set currentUser(user: CurrentUser | null | undefined) {
+    if (user) {
+      localStorage.setItem('currentUser', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('currentUser');
+    }
+  }
 
   login(email: string, password: string) {
     const query = `
@@ -35,17 +46,39 @@ export class AuthService {
         query,
         variables,
       })
-    ).then((response) => {
-      const user = response.data.login as CurrentUser;
-      this.currentUser = user;
-      localStorage.setItem('currentUser', JSON.stringify(user));
+    )
+      .then((response) => {
+        const user = response.data.login as CurrentUser;
+        this.currentUser = user;
 
-      return user;
-    });
+        return user;
+      })
+      .catch((error) => {
+        console.error('Login error', error);
+        throw error;
+      });
   }
 
   register(email: string, password: string): void {
     // Implement registration logic here
     console.log('Registering with', email, password);
+  }
+
+  getAccessToken(): string | null {
+    if (this.currentUser?.accessToken) {
+      return this.currentUser.accessToken;
+    }
+
+    const cachedUser = localStorage.getItem('currentUser');
+    if (!cachedUser) return null;
+
+    try {
+      const parsed = JSON.parse(cachedUser) as CurrentUser | null;
+      this.currentUser = parsed ?? undefined;
+      return parsed?.accessToken ?? null;
+    } catch (error) {
+      console.warn('Failed to parse cached currentUser', error);
+      return null;
+    }
   }
 }

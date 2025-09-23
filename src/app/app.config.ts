@@ -9,14 +9,16 @@ import { routes } from './app.routes';
 import { API_CONFIG } from './helpers/tokens';
 import { ProductService } from './helpers/services/product.service';
 import { AuthService } from './helpers/services/auth.service';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { OrderService } from './helpers/services/order.service';
+import { authInterceptor } from './helpers/interceptors/auth.interceptor';
+import { loggingInterceptor } from './helpers/interceptors/logging.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([loggingInterceptor, authInterceptor])),
 
     provideRouter(routes, withComponentInputBinding()),
     {
