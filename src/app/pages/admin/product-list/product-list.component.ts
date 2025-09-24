@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import {
   DxButtonComponent,
   DxButtonModule,
@@ -23,18 +23,21 @@ import { Product } from '../../../helpers/models/product.model';
   selector: 'app-admin-product-list',
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss'],
-  imports: [DxDataGridModule, DxContextMenuModule, DxButtonModule],
+  imports: [DxDataGridModule, DxContextMenuModule, DxButtonModule, RouterLink],
 })
 export class ProductListComponent {
-  productsService = inject(ProductService);
-  router = inject(Router);
+  private productsService = inject(ProductService);
+  private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
   products$ = this.productsService.getProducts();
   editingGrid = signal(false);
 
   dataGridDataSource = new CustomStore({
     key: 'id',
     load: () => {
-      const products = firstValueFrom(this.productsService.getProducts());
+      const products = firstValueFrom(
+        this.productsService.getProducts().pipe(takeUntilDestroyed(this.destroyRef))
+      );
       return products;
     },
     update: (key, values) => {
@@ -63,7 +66,9 @@ export class ProductListComponent {
         updates.discontinued = candidate.discontinued;
       }
 
-      const update$ = this.productsService.updateProduct(productId, updates);
+      const update$ = this.productsService
+        .updateProduct(productId, updates)
+        .pipe(takeUntilDestroyed(this.destroyRef));
       return firstValueFrom(update$).then((updatedProduct) => {
         console.log('Ürün başarıyla güncellendi:', updatedProduct);
         return updatedProduct;
@@ -76,7 +81,9 @@ export class ProductListComponent {
         return Promise.reject('Geçersiz ürün kimliği');
       }
 
-      const delete$ = this.productsService.deleteProduct(productId);
+      const delete$ = this.productsService
+        .deleteProduct(productId)
+        .pipe(takeUntilDestroyed(this.destroyRef));
       return firstValueFrom(delete$).then((deletedProduct) => {
         console.log('Ürün başarıyla silindi:', deletedProduct);
       });
@@ -104,7 +111,9 @@ export class ProductListComponent {
         payload.discontinued = candidate.discontinued;
       }
 
-      const create$ = this.productsService.createProduct(payload);
+      const create$ = this.productsService
+        .createProduct(payload)
+        .pipe(takeUntilDestroyed(this.destroyRef));
       return firstValueFrom(create$).then((createdProduct) => {
         console.log('Ürün başarıyla oluşturuldu:', createdProduct);
         return createdProduct;
@@ -158,12 +167,7 @@ export class ProductListComponent {
 
     this.productsService
       .updateProduct(productId, updates)
-      .pipe
-      // catchError((error) => {
-      //   console.error('Ürün güncelleme hatası:', error);
-      //   throw error;
-      // })
-      ()
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (updatedProduct) => {
           console.log('Ürün başarıyla güncellendi:', updatedProduct);

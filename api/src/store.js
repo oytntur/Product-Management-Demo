@@ -12,16 +12,119 @@ const users = [
   },
 ];
 
-const products = [
-  new Product(1, 'Notebook', 120, 7.5, 'pcs', false, []),
-  new Product(2, 'Pen', 500, 1.2, 'pcs', false, []),
-  new Product(3, 'Backpack', 80, 42.0, 'pcs', false, []),
+const productSeedData = [
+  { name: 'Notebook', unitsInStock: 120, unitPrice: 7.5, unit: 'pcs' },
+  { name: 'Pen', unitsInStock: 500, unitPrice: 1.2, unit: 'pcs' },
+  { name: 'Backpack', unitsInStock: 80, unitPrice: 42.0, unit: 'pcs' },
+  { name: 'Stapler', unitsInStock: 60, unitPrice: 15.5, unit: 'pcs' },
+  { name: 'Highlighter Set', unitsInStock: 150, unitPrice: 9.99, unit: 'set' },
+  { name: 'Whiteboard Marker', unitsInStock: 200, unitPrice: 2.5, unit: 'pcs' },
+  { name: 'Desk Organizer', unitsInStock: 75, unitPrice: 18.25, unit: 'pcs' },
+  { name: 'Office Chair', unitsInStock: 25, unitPrice: 210.0, unit: 'pcs' },
+  { name: 'Standing Desk', unitsInStock: 18, unitPrice: 420.0, unit: 'pcs' },
+  { name: 'Filing Cabinet', unitsInStock: 12, unitPrice: 289.0, unit: 'pcs' },
+  { name: 'Paper Clips', unitsInStock: 2000, unitPrice: 0.02, unit: 'pcs' },
+  { name: 'Binder Clips', unitsInStock: 900, unitPrice: 0.15, unit: 'pcs' },
+  { name: 'Sticky Notes', unitsInStock: 500, unitPrice: 1.45, unit: 'pad' },
+  { name: 'Letter Envelope', unitsInStock: 800, unitPrice: 0.12, unit: 'pcs' },
+  { name: 'Shipping Box Small', unitsInStock: 400, unitPrice: 0.75, unit: 'pcs' },
+  { name: 'Shipping Box Medium', unitsInStock: 300, unitPrice: 1.1, unit: 'pcs' },
+  { name: 'Shipping Box Large', unitsInStock: 250, unitPrice: 1.5, unit: 'pcs' },
+  { name: 'Monitor 24"', unitsInStock: 45, unitPrice: 159.99, unit: 'pcs' },
+  { name: 'Monitor Arm', unitsInStock: 65, unitPrice: 85.0, unit: 'pcs' },
+  { name: 'Laptop Stand', unitsInStock: 120, unitPrice: 34.5, unit: 'pcs' },
+  { name: 'Ergonomic Keyboard', unitsInStock: 70, unitPrice: 99.0, unit: 'pcs' },
+  { name: 'Wireless Mouse', unitsInStock: 160, unitPrice: 32.5, unit: 'pcs' },
+  { name: 'USB-C Hub', unitsInStock: 110, unitPrice: 44.0, unit: 'pcs' },
+  { name: 'External SSD', unitsInStock: 55, unitPrice: 129.0, unit: 'pcs' },
+  { name: 'Printer Paper Ream', unitsInStock: 350, unitPrice: 5.6, unit: 'ream' },
+  { name: 'Laminating Pouches', unitsInStock: 200, unitPrice: 12.5, unit: 'box' },
+  { name: 'Desk Lamp', unitsInStock: 90, unitPrice: 48.75, unit: 'pcs' },
+  { name: 'Extension Cord', unitsInStock: 140, unitPrice: 14.5, unit: 'pcs' },
+  { name: 'Surge Protector', unitsInStock: 130, unitPrice: 24.0, unit: 'pcs' },
+  { name: 'Ethernet Cable', unitsInStock: 300, unitPrice: 8.2, unit: 'pcs' },
+  { name: 'Webcam HD', unitsInStock: 80, unitPrice: 79.0, unit: 'pcs' },
+  { name: 'Noise Cancelling Headset', unitsInStock: 45, unitPrice: 189.0, unit: 'pcs' },
+  { name: 'Conference Speaker', unitsInStock: 35, unitPrice: 249.0, unit: 'pcs' },
+  { name: 'Portable Projector', unitsInStock: 28, unitPrice: 329.0, unit: 'pcs' },
+  { name: 'Travel Mug', unitsInStock: 210, unitPrice: 18.0, unit: 'pcs' },
+  { name: 'Water Bottle', unitsInStock: 260, unitPrice: 12.5, unit: 'pcs' },
+  { name: 'Snack Pack', unitsInStock: 320, unitPrice: 4.75, unit: 'pack' },
+  { name: 'Cleaning Wipes', unitsInStock: 240, unitPrice: 6.4, unit: 'canister' },
+  { name: 'Hand Sanitizer', unitsInStock: 280, unitPrice: 3.2, unit: 'bottle' },
+  { name: 'First Aid Kit', unitsInStock: 50, unitPrice: 54.0, unit: 'pcs' },
+  { name: 'Cable Organizer', unitsInStock: 150, unitPrice: 11.0, unit: 'pcs' },
+  { name: 'Battery Pack', unitsInStock: 95, unitPrice: 39.0, unit: 'pcs' },
+  { name: 'Power Adapter', unitsInStock: 110, unitPrice: 27.0, unit: 'pcs' },
+  { name: 'Premium Notebook', unitsInStock: 140, unitPrice: 12.5, unit: 'pcs' },
+  { name: 'Gel Pen Set', unitsInStock: 180, unitPrice: 7.8, unit: 'set' },
+  { name: 'Mechanical Pencil', unitsInStock: 160, unitPrice: 3.6, unit: 'pcs' },
+  { name: 'Planner 2024', unitsInStock: 90, unitPrice: 22.0, unit: 'pcs' },
+  { name: 'Desk Calendar', unitsInStock: 85, unitPrice: 14.0, unit: 'pcs' },
+  { name: 'Mouse Pad', unitsInStock: 200, unitPrice: 9.5, unit: 'pcs' },
+  { name: 'Chair Mat', unitsInStock: 40, unitPrice: 65.0, unit: 'pcs' },
 ];
+
+const products = productSeedData.map(
+  (item, index) =>
+    new Product(
+      index + 1,
+      item.name,
+      item.unitsInStock,
+      item.unitPrice,
+      item.unit || 'pcs',
+      Boolean(item.discontinued),
+      []
+    )
+);
 
 let productSequence = products.length + 1;
 let orderSequence = 1;
 
 const orders = [];
+
+const seedMockOrders = () => {
+  const customerNames = [
+    'Acme Logistics',
+    'Globex Corporation',
+    'Initech',
+    'Umbrella Retail',
+    'Soylent Foods',
+    'Stark Industries',
+    'Wayne Enterprises',
+    'Wonka Distributors',
+    'Tyrell Systems',
+    'Cyberdyne Labs',
+    'Genco Pura',
+    'Oscorp',
+  ];
+  const totalOrders = 240;
+  const baseDate = new Date('2024-01-01T09:00:00.000Z');
+
+  for (let i = 0; i < totalOrders; i += 1) {
+    const product = products[i % products.length];
+    const customerName = customerNames[i % customerNames.length];
+    const orderDate = new Date(baseDate.getTime() - i * 36 * 60 * 60 * 1000);
+    const expectedDeliveryDate = new Date(
+      orderDate.getTime() + (3 + (i % 7)) * 24 * 60 * 60 * 1000
+    );
+    const amount = 5 + (i % 20);
+
+    const order = new Order(
+      orderSequence++,
+      customerName,
+      orderDate.toISOString(),
+      expectedDeliveryDate.toISOString(),
+      amount,
+      product.id
+    );
+
+    orders.push({ userId: users[0].id, order });
+    product.orders.push(order);
+  }
+};
+
+seedMockOrders();
 
 const addUser = (user) => {
   users.push(user);

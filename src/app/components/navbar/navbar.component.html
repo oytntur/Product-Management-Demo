@@ -3,4 +3,6 @@
 >
   <ng-container *ngComponentOutlet="headerComponent()"></ng-container>
   <span class="navbar-text">{{ currentUser()?.fullName }}</span>
+  <span routerLink="/admin/home">Go To Homepage</span>
+  <span routerLink="/admin/products">Go To Products</span>
 </nav>

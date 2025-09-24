@@ -1,6 +1,6 @@
 import { NgComponentOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavbarProductSelectComponent } from './navbar-product-select.component';
@@ -12,7 +12,7 @@ import { AuthService } from '../../helpers/services/auth.service';
   standalone: true,
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
-  imports: [NgComponentOutlet],
+  imports: [NgComponentOutlet, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent {

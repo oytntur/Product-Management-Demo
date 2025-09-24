@@ -2,13 +2,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  effect,
   inject,
   input,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ProductService } from '../../../helpers/services/product.service';
-import { catchError, finalize, of, switchMap, tap, shareReplay, first, firstValueFrom } from 'rxjs';
+import { catchError, finalize, of, switchMap, shareReplay, firstValueFrom, startWith } from 'rxjs';
 import { DxButtonModule, DxProgressBarModule, DxDataGridModule } from 'devextreme-angular';
 import { Product } from '../../../helpers/models/product.model';
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
@@ -49,16 +50,18 @@ export class ProductComponent {
   // Stream: fetch product when id exists, cache last value with shareReplay
   private product$ = this.productId$.pipe(
     takeUntilDestroyed(),
-    tap(() => {
-      this.isLoading.set(true);
-    }),
     switchMap((id) => {
-      if (!id) {
-        return of(null as Product | null).pipe(finalize(() => this.isLoading.set(false)));
+      if (id == null) {
+        this.isLoading.set(false);
+        return of(null as Product | null);
       }
+
+      this.isLoading.set(true);
       return this.productService.getProductById(id).pipe(
+        takeUntilDestroyed(this.destroyRef),
         catchError(() => of(null)),
-        finalize(() => this.isLoading.set(false))
+        finalize(() => this.isLoading.set(false)),
+        startWith(null) // emit a null placeholder so the UI shows loading state
       );
     }),
     // cache the latest successfully fetched product for new subscribers
