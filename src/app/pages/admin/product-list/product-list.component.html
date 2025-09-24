@@ -23,26 +23,32 @@
 >
   <dxo-filter-row [visible]="true"></dxo-filter-row>
   <dxo-search-panel [visible]="true" />
-  <dxi-column dataField="id" caption="Ürün ID" />
-  <dxi-column dataField="supplierId" caption="Tedarikçi ID" />
-  <dxi-column dataField="categoryId" caption="Kategori ID" />
-  <dxi-column dataField="quantityPerUnit" caption="Birim Başına Miktar" />
-  <dxi-column dataField="unitPrice" caption="Birim Fiyat" format="currency" />
-  <dxi-column dataField="unitsInStock" caption="Stoktaki Ürün" />
-  <dxi-column dataField="unitsOnOrder" caption="Siparişteki Ürün" />
-  <dxi-column dataField="reorderLevel" caption="Yeniden Sipariş" />
-  <dxi-column dataField="discontinued" caption="Pasif" dataType="boolean" />
+  <dxi-column dataField="id" caption="Ürün ID" width="100px" />
+  <dxi-column dataField="supplierId" caption="Tedarikçi ID" width="100px" />
+  <dxi-column dataField="categoryId" caption="Kategori ID" width="100px" />
+  <dxi-column
+    dataField="quantityPerUnit"
+    caption="Birim Başına Miktar"
+    width="100px"
+    minWidth="100px"
+  />
+  <dxi-column dataField="unitPrice" caption="Birim Fiyat" format="currency" width="100px" />
+  <dxi-column dataField="unitsInStock" caption="Stoktaki Ürün" width="100px" />
+  <dxi-column dataField="unitsOnOrder" caption="Siparişteki Ürün" width="100px" />
+  <dxi-column dataField="reorderLevel" caption="Yeniden Sipariş" width="100px" />
+  <dxi-column dataField="discontinued" caption="Pasif" dataType="boolean" width="100px" />
   <dxo-editing mode="row" [allowUpdating]="true" [allowDeleting]="true" />
-  <dxi-column type="buttons">
-    <dxi-button
-      hint="Detay Gör"
-      text="Detay Gör"
-      [visible]="!editingGrid()"
-      [onClick]="goToDetail"
-    ></dxi-button>
-    <dxi-button name="edit" text="Düzenle" [visible]="!editingGrid()"></dxi-button>
-    <dxi-button name="delete" text="Sil" [visible]="!editingGrid()"></dxi-button>
-    <dxi-button name="save" text="Kaydet" [visible]="editingGrid()"></dxi-button>
-    <dxi-button name="cancel" text="İptal" [visible]="editingGrid()"></dxi-button>
+  <dxi-column type="buttons" minWidth="100" fixed="right">
+    @if(!editingGrid()) {
+    <dxi-button name="detail" icon="info" [onClick]="goToDetail"></dxi-button>
+
+    <dxi-button name="edit" icon="edit"></dxi-button>
+    <dxi-button name="delete" icon="trash"></dxi-button>
+    } @else {
+    <dxi-button name="save" icon="save"></dxi-button>
+    <dxi-button name="cancel" icon="close"></dxi-button>
+    }
   </dxi-column>
 </dx-data-grid>
+<!-- TODO Add this to datagrid for better responsive -->
+<button id="image" icon>My Button</button>

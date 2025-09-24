@@ -12,10 +12,9 @@ import { Component } from '@angular/core';
       .footer {
         background-color: #f8f9fa;
         padding: 1rem 0;
-        position: fixed;
-        bottom: 0;
         width: 100%;
         text-align: center;
+        z-index: 1000;
       }
     `,
   ],

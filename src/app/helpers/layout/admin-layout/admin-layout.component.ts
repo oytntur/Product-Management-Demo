@@ -7,12 +7,30 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-admin-layout',
   template: `
     <app-navbar></app-navbar>
-    <main class="container">
+    <div class="wrapper">
       <router-outlet></router-outlet>
-    </main>
-    <app-footer></app-footer>
+      <app-footer></app-footer>
+    </div>
   `,
-  styles: [``],
+  styles: [
+    `
+      :host {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        align-items: stretch;
+      }
+      .wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+      }
+    `,
+  ],
   imports: [NavbarComponent, FooterComponent, RouterOutlet],
 })
 export class AdminLayoutComponent {}

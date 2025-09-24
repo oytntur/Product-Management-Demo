@@ -1,21 +1,52 @@
-import { Component, inject, signal } from '@angular/core';
-import { DxButtonComponent, DxDataGridModule } from 'devextreme-angular';
+import { Component, inject, signal, viewChild } from '@angular/core';
+import { DxButtonComponent, DxContextMenuModule, DxDataGridModule } from 'devextreme-angular';
 import { ProductService } from '../../../helpers/services/product.service';
-import { AsyncPipe, JsonPipe } from '@angular/common';
+import { AsyncPipe, JsonPipe, NgClass } from '@angular/common';
 import { RowRemovedEvent, RowUpdatedEvent } from 'devextreme/ui/data_grid';
 import { Router, RouterLink } from '@angular/router';
+import { DxContextMenuComponent, DxContextMenuTypes } from 'devextreme-angular/ui/context-menu';
 
 @Component({
   selector: 'app-admin-product-list',
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss'],
-  imports: [DxDataGridModule, AsyncPipe, DxButtonComponent, RouterLink],
+  imports: [
+    DxDataGridModule,
+    AsyncPipe,
+    DxButtonComponent,
+    DxContextMenuModule,
+    NgClass,
+    DxButtonComponent,
+  ],
 })
 export class ProductListComponent {
   productsService = inject(ProductService);
   router = inject(Router);
   products = this.productsService.getProducts();
   editingGrid = signal(false);
+
+  contextMenuItems = [
+    { text: 'Zoom In' },
+    { text: 'Zoom Out' },
+    {
+      text: 'Share',
+      items: [
+        {
+          text: 'Send to a friend',
+          items: [{ text: 'Log in with Facebook' }, { text: 'Log in with Twitter' }],
+        },
+        {
+          text: 'Send to a group',
+          items: [{ text: 'Log in with Facebook' }, { text: 'Log in with Twitter' }],
+        },
+      ],
+    },
+    { text: 'Comment' },
+  ];
+
+  itemClick(e: any) {
+    console.log('Item clicked:', e);
+  }
 
   goToDetail = (event: any) => {
     const productId = event?.row?.data?.id;
