@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { filter, switchMap, take } from 'rxjs';
+import { filter, switchMap, take, tap } from 'rxjs';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
@@ -58,7 +58,7 @@ type OrderForm = {
 })
 export class ProductEditComponent {
   // Route param veya parent’tan gelecek id
-  productId = input<number | undefined>();
+  productId = input<number | string | undefined>();
   private productId$ = toObservable(this.productId);
 
   private fb = inject(FormBuilder);
@@ -90,8 +90,9 @@ export class ProductEditComponent {
     this.productId$
       .pipe(
         takeUntilDestroyed(),
-        filter((id): id is number => id !== undefined),
-        switchMap((id) => this.productService.getProductById(id))
+
+        filter((id) => id !== undefined && id !== null && id !== 'undefined'),
+        switchMap((id) => this.productService.getProductById(+id!))
       )
       .subscribe((prod) => {
         this.product.set(prod);

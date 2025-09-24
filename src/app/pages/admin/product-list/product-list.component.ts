@@ -10,14 +10,7 @@ import { DxContextMenuComponent, DxContextMenuTypes } from 'devextreme-angular/u
   selector: 'app-admin-product-list',
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss'],
-  imports: [
-    DxDataGridModule,
-    AsyncPipe,
-    DxButtonComponent,
-    DxContextMenuModule,
-    NgClass,
-    DxButtonComponent,
-  ],
+  imports: [DxDataGridModule, AsyncPipe, DxButtonComponent, DxContextMenuModule, DxButtonComponent],
 })
 export class ProductListComponent {
   productsService = inject(ProductService);
@@ -58,7 +51,7 @@ export class ProductListComponent {
   };
 
   addNewProduct() {
-    console.log('Yeni ürün ekleme tıklandı');
+    this.router.navigate(['/admin/products/undefined/edit']);
   }
 
   updateProduct(event: RowUpdatedEvent) {

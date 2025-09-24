@@ -7,10 +7,10 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-admin-layout',
   template: `
     <app-navbar></app-navbar>
-    <div class="wrapper">
+    <div class="container wrapper">
       <router-outlet></router-outlet>
-      <app-footer></app-footer>
     </div>
+    <app-footer></app-footer>
   `,
   styles: [
     `
@@ -21,13 +21,13 @@ import { RouterOutlet } from '@angular/router';
         width: 100%;
         padding: 0;
         margin: 0;
-        width: 100%;
         align-items: stretch;
       }
       .wrapper {
         display: flex;
         flex-direction: column;
         align-items: stretch;
+        flex: 1 0 auto;
       }
     `,
   ],
