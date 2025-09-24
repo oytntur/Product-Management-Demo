@@ -28,6 +28,7 @@ type OrderForm = FormGroup<{
   orderDate: FormControl<string>;
   expectedDeliveryDate: FormControl<string>;
   amount: FormControl<number>;
+  productId: FormControl<number | null | undefined>;
 }>;
 
 type ProductForm = FormGroup<{
@@ -117,6 +118,7 @@ export class ProductEditComponent {
                   Validators.required,
                 ]),
                 amount: this.fb.control(o.amount, [Validators.required, Validators.min(0)]),
+                productId: this.fb.control<number | null | undefined>(o.productId),
               })
             )
           );
@@ -157,6 +159,7 @@ export class ProductEditComponent {
         Validators.required,
       ]),
       amount: this.fb.control(seed?.amount ?? 0, [Validators.required, Validators.min(0)]),
+      productId: this.fb.control<number | null | undefined>(seed?.productId ?? null),
     });
   }
 
