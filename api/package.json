@@ -1,0 +1,13 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "Simple Node.js REST API with JWT authentication",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node scripts/test-api.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

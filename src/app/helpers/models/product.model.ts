@@ -1,14 +1,13 @@
+import { Order } from './order.model';
+
 export class Product {
   constructor(
     public id: number,
-    public supplierId: number,
-    public categoryId: number,
-    public quantityPerUnit: string,
-    public unitPrice: number,
+    public name: string,
     public unitsInStock: number,
-    public unitsOnOrder: number,
-    public reorderLevel: number,
+    public unitPrice: number,
+    public unit: string,
     public discontinued: boolean,
-    public name: string
+    public orders: Order[]
   ) {}
 }
