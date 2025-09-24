@@ -7,6 +7,7 @@ import { ProductService } from '../../../helpers/services/product.service';
 import { OrderService } from '../../../helpers/services/order.service';
 import { Product } from '../../../helpers/models/product.model';
 import { Order } from '../../../helpers/models/order.model';
+import { LoadingCardComponent } from '../../../components/loading-card/loading-card.component';
 
 interface DashboardSummaryCard {
   label: string;
@@ -50,7 +51,15 @@ interface DashboardViewModel {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AsyncPipe, CurrencyPipe, DatePipe, DecimalPipe, NgClass, RouterLink],
+  imports: [
+    AsyncPipe,
+    CurrencyPipe,
+    DatePipe,
+    DecimalPipe,
+    NgClass,
+    RouterLink,
+    LoadingCardComponent,
+  ],
 })
 export class HomeComponent {
   private readonly productService = inject(ProductService);

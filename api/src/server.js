@@ -23,10 +23,12 @@ const HOST = process.env.HOST || '127.0.0.1';
 const JWT_SECRET = process.env.JWT_SECRET || 'change_me';
 const TOKEN_TTL_SECONDS = 60 * 60; // 1 hour
 
-const ALLOWED_ORIGINS = new Set([
-  'http://localhost:4200',
-  'http://127.0.0.1:4200',
-]);
+const randomDelay = (minMs = 3000, maxMs = 5000) => {
+  const duration = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
+  return new Promise((resolve) => setTimeout(resolve, duration));
+};
+
+const ALLOWED_ORIGINS = new Set(['http://localhost:4200', 'http://127.0.0.1:4200']);
 
 const applyCors = (req, res) => {
   const origin = req.headers.origin;
@@ -46,30 +48,31 @@ const sendJson = (res, statusCode, data) => {
   res.end(JSON.stringify(data));
 };
 
-const readJsonBody = (req) => new Promise((resolve, reject) => {
-  let body = '';
-  req.on('data', (chunk) => {
-    body += chunk;
-    if (body.length > 1e6) {
-      req.connection.destroy();
-      reject(new Error('Body too large'));
-    }
+const readJsonBody = (req) =>
+  new Promise((resolve, reject) => {
+    let body = '';
+    req.on('data', (chunk) => {
+      body += chunk;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+        reject(new Error('Body too large'));
+      }
+    });
+    req.on('end', () => {
+      if (!body) {
+        resolve({});
+        return;
+      }
+      try {
+        resolve(JSON.parse(body));
+      } catch (err) {
+        const parseError = new Error('Invalid JSON payload');
+        parseError.statusCode = 400;
+        reject(parseError);
+      }
+    });
+    req.on('error', reject);
   });
-  req.on('end', () => {
-    if (!body) {
-      resolve({});
-      return;
-    }
-    try {
-      resolve(JSON.parse(body));
-    } catch (err) {
-      const parseError = new Error('Invalid JSON payload');
-      parseError.statusCode = 400;
-      reject(parseError);
-    }
-  });
-  req.on('error', reject);
-});
 
 const extractToken = (req) => {
   const header = req.headers['authorization'];
@@ -107,6 +110,7 @@ const handleRequest = async (req, res) => {
   }
 
   applyCors(req, res);
+  await randomDelay(); // Introduce artificial latency for all endpoints
 
   const requestUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   const { pathname } = requestUrl;
@@ -227,9 +231,10 @@ const handleRequest = async (req, res) => {
         const productId = Number(body.productId);
         const amount = Number(body.amount);
         const expectedDeliveryDateInput = body.expectedDeliveryDate;
-        const customerName = typeof body.customerName === 'string' && body.customerName.trim()
-          ? body.customerName.trim()
-          : claims.name;
+        const customerName =
+          typeof body.customerName === 'string' && body.customerName.trim()
+            ? body.customerName.trim()
+            : claims.name;
 
         if (!Number.isInteger(productId)) {
           const err = new Error('productId must be an integer');

@@ -137,20 +137,22 @@
         <div class="card-body">
           <h2 class="card-title h6 mb-3">Hızlı İşlemler</h2>
           <div class="d-grid gap-2">
-            <a routerLink="/admin/products" class="btn btn-outline-primary btn-sm">Ürünleri Görüntüle</a>
-            <a routerLink="/admin/products" class="btn btn-outline-success btn-sm">Yeni Ürün Ekle</a>
-            <a routerLink="/admin/products" class="btn btn-outline-secondary btn-sm"
-              >Stok Raporu</a
+            <a routerLink="/admin/products" class="btn btn-outline-primary btn-sm"
+              >Ürünleri Görüntüle</a
             >
+            <a routerLink="/admin/products" class="btn btn-outline-success btn-sm"
+              >Yeni Ürün Ekle</a
+            >
+            <a routerLink="/admin/products" class="btn btn-outline-secondary btn-sm">Stok Raporu</a>
           </div>
         </div>
       </section>
     </aside>
   </div>
   } @else {
-    <div class="dashboard__loading text-muted">
-      <div class="spinner-border text-primary mb-3" role="status"></div>
-      <p class="mb-0">Kontrol paneli verileri yükleniyor...</p>
-    </div>
+  <app-loading-card
+    heading="Admin Paneli Yükleniyor..."
+    description="Admin paneli verileri yüklenirken lütfen bekleyin."
+  ></app-loading-card>
   }
 </section>

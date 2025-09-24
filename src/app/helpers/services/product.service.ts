@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { API_CONFIG } from '../tokens';
-import { delay, map, Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Product } from '../models/product.model';
 
 export interface ProductCreatePayload {
@@ -27,17 +27,15 @@ export class ProductService {
   }
 
   getProducts(): Observable<Product[]> {
-    return this.httpClient.get<{ products: Product[] }>(this.buildUrl('/products')).pipe(
-      delay(5000),
-      map((response) => response.products ?? [])
-    );
+    return this.httpClient
+      .get<{ products: Product[] }>(this.buildUrl('/products'))
+      .pipe(map((response) => response.products ?? []));
   }
 
   getProductById(id: number): Observable<Product> {
-    return this.httpClient.get<{ product: Product }>(this.buildUrl(`/products/${id}`)).pipe(
-      delay(5000),
-      map((response) => response.product)
-    );
+    return this.httpClient
+      .get<{ product: Product }>(this.buildUrl(`/products/${id}`))
+      .pipe(map((response) => response.product));
   }
 
   createProduct(payload: ProductCreatePayload): Observable<Product> {
@@ -45,26 +43,23 @@ export class ProductService {
 
     console.log('Creating product with body:', body);
 
-    return this.httpClient.post<{ product: Product }>(this.buildUrl('/products'), body).pipe(
-      delay(5000),
-      map((response) => response.product)
-    );
+    return this.httpClient
+      .post<{ product: Product }>(this.buildUrl('/products'), body)
+      .pipe(map((response) => response.product));
   }
 
   updateProduct(id: number, updates: ProductUpdatePayload): Observable<Product> {
     const body = this.toProductBody(updates);
 
-    return this.httpClient.put<{ product: Product }>(this.buildUrl(`/products/${id}`), body).pipe(
-      delay(5000),
-      map((response) => response.product)
-    );
+    return this.httpClient
+      .put<{ product: Product }>(this.buildUrl(`/products/${id}`), body)
+      .pipe(map((response) => response.product));
   }
 
   deleteProduct(id: number): Observable<Product> {
-    return this.httpClient.delete<{ product: Product }>(this.buildUrl(`/products/${id}`)).pipe(
-      delay(5000),
-      map((response) => response.product)
-    );
+    return this.httpClient
+      .delete<{ product: Product }>(this.buildUrl(`/products/${id}`))
+      .pipe(map((response) => response.product));
   }
 
   private toProductBody(payload: ProductCreatePayload | ProductUpdatePayload) {

@@ -2,3 +2,8 @@
 
 /* Importing Bootstrap SCSS file. */
 @import 'bootstrap/scss/bootstrap';
+
+.dx-button.dx-button-warning {
+  background-color: #ffc107;
+  color: #fff;
+}
