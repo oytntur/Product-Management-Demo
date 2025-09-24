@@ -213,9 +213,9 @@ const createProduct = ({
 
 const updateProduct = (id, updates) => {
   const product = getProductById(id);
-  const testError = new Error('Test error');
-  testError.statusCode = 500;
-  throw testError;
+  // const testError = new Error('Test error');
+  // testError.statusCode = 500;
+  // throw testError;
   if (!product) {
     const err = new Error('Product not found');
     err.statusCode = 404;

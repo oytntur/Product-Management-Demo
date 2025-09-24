@@ -1,4 +1,5 @@
-import { Order } from './order.model';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { Order, OrderForm } from './order.model';
 
 export interface Product {
   id: number;
@@ -14,3 +15,18 @@ export interface Product {
   unitsOnOrder?: number | null;
   reorderLevel?: number | null;
 }
+
+export type ProductForm = FormGroup<{
+  id: FormControl<number | null>;
+  name: FormControl<string>;
+  unitsInStock: FormControl<number>;
+  unitPrice: FormControl<number>;
+  unit: FormControl<string>;
+  discontinued: FormControl<boolean>;
+  supplierId: FormControl<number | null>;
+  categoryId: FormControl<number | null>;
+  quantityPerUnit: FormControl<string | null>;
+  unitsOnOrder: FormControl<number | null>;
+  reorderLevel: FormControl<number | null>;
+  orders: FormArray<OrderForm>;
+}>;
