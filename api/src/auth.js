@@ -3,7 +3,7 @@
 const { addUser, getUserByEmail } = require('./store');
 const { hashPassword, verifyPassword } = require('./utils/password');
 
-let userSequence = 1;
+let userSequence = 2;
 
 const registerUser = ({ email, password, name }) => {
   if (!email || !password) {

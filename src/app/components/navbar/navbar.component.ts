@@ -1,6 +1,6 @@
 import { NgComponentOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavbarProductSelectComponent } from './navbar-product-select.component';
@@ -17,6 +17,7 @@ import { AuthService } from '../../helpers/services/auth.service';
 })
 export class NavbarComponent {
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthService);
 
   private readonly currentUrl = toSignal(
@@ -29,10 +30,14 @@ export class NavbarComponent {
   );
 
   readonly headerComponent = computed(() =>
-    this.currentUrl().startsWith('/admin/products/')
+    this.currentUrl().match(/^\/admin\/products\/\d+$/)
       ? NavbarProductSelectComponent
       : NavbarHeaderTextComponent
   );
 
   readonly currentUser = this.authService.authedUser;
+
+  constructor() {
+    console.log('aaaaaaaaa', this.currentUrl().match(/^\/admin\/products\/\d+$/));
+  }
 }

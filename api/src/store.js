@@ -2,7 +2,15 @@
 
 const { Product, Order } = require('./models');
 
-const users = [];
+const users = [
+  {
+    id: 'user-1',
+    email: 'development@development.com',
+    name: 'Oytun',
+    passwordHash:
+      'fb2a976e3102fd4e3a562c29deded6cb:122368a248c276aead3e66218fc303360e69177bdbdba1ae4e6b9289fd7beec41495d722a75c8fcf847500977d60531635040bd89c98b53acb5970a02a11da38',
+  },
+];
 
 const products = [
   new Product(1, 'Notebook', 120, 7.5, 'pcs', false, []),

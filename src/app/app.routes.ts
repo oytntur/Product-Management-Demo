@@ -20,7 +20,6 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    title: 'Yönetim',
     loadComponent: () =>
       import('./helpers/layout/admin-layout/admin-layout.component').then(
         (m) => m.AdminLayoutComponent
@@ -61,7 +60,7 @@ export const routes: Routes = [
           },
           {
             path: ':productId',
-            title: 'Ürün Detayı',
+            data: { customTitle: true },
             loadComponent: () =>
               import('./pages/admin/product/product.component').then((m) => m.ProductComponent),
           },
