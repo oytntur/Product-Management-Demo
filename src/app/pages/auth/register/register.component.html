@@ -1,7 +1,14 @@
 <div class="login-page">
   <h2>Kayıt Sayfası</h2>
-  <!-- Kayıt formunuzu buraya ekleyin -->
-  <form [formGroup]="registerForm">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <dx-text-box
+        label="Ad Soyad"
+        labelMode="floating"
+        formControlName="fullName"
+        placeholder="Adınız ve soyadınız"
+      />
+    </div>
     <div class="mb-3">
       <dx-text-box
         mode="email"
@@ -33,6 +40,20 @@
       />
     </div>
 
-    <dx-button type="warning" (click)="onSubmit()">Gönder</dx-button>
+    @if (errorMessage(); as error) {
+    <div class="alert alert-danger" role="alert">{{ error }}</div>
+    } @if (successMessage(); as success) {
+    <div class="alert alert-success" role="alert">{{ success }}</div>
+    }
+
+    <dx-button
+      type="default"
+      stylingMode="contained"
+      icon="save"
+      [disabled]="registerForm.invalid"
+      [useSubmitBehavior]="true"
+    >
+      Gönder
+    </dx-button>
   </form>
 </div>

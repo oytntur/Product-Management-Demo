@@ -1,7 +1,15 @@
 <h2>Yönetim Ürün Listesi</h2>
-<dx-button text="Yeni Ürün Ekle" (onClick)="addNewProduct()"></dx-button>
+<dx-button
+  text="Yeni Ürün Ekle"
+  icon="plus"
+  type="success"
+  stylingMode="contained"
+  class="mb-3"
+  (onClick)="router.navigate(['/admin/products/new'])"
+></dx-button>
+@if(dataGridDataSource){
 <dx-data-grid
-  [dataSource]="products | async"
+  [dataSource]="dataGridDataSource"
   [columns]="[
     'id',
     'supplierId',
@@ -15,29 +23,21 @@
   ]"
   [showBorders]="true"
   keyExpr="id"
-  (onRowUpdated)="updateProduct($event)"
-  (onRowRemoved)="deleteProduct($event)"
+  (onRowClick)="goToDetail($event)"
   (onEditingStart)="startEditing()"
   (onEditCanceled)="stopEditing()"
+  (onRowInserting)="startEditing()"
   (onSaved)="stopEditing()"
 >
   <dxo-filter-row [visible]="true"></dxo-filter-row>
   <dxo-search-panel [visible]="true" />
   <dxi-column dataField="id" caption="Ürün ID" width="100px" />
-  <dxi-column dataField="supplierId" caption="Tedarikçi ID" width="100px" />
-  <dxi-column dataField="categoryId" caption="Kategori ID" width="100px" />
-  <dxi-column
-    dataField="quantityPerUnit"
-    caption="Birim Başına Miktar"
-    width="100px"
-    minWidth="100px"
-  />
-  <dxi-column dataField="unitPrice" caption="Birim Fiyat" format="currency" width="100px" />
-  <dxi-column dataField="unitsInStock" caption="Stoktaki Ürün" width="100px" />
-  <dxi-column dataField="unitsOnOrder" caption="Siparişteki Ürün" width="100px" />
-  <dxi-column dataField="reorderLevel" caption="Yeniden Sipariş" width="100px" />
+  <dxi-column dataField="name" caption="Ürün" minWidth="160px" />
+  <dxi-column dataField="unitPrice" caption="Birim Fiyat" format="currency" width="120px" />
+  <dxi-column dataField="unitsInStock" caption="Stoktaki Ürün" width="130px" />
+  <dxi-column dataField="unit" caption="Birim" width="100px" />
   <dxi-column dataField="discontinued" caption="Pasif" dataType="boolean" width="100px" />
-  <dxo-editing mode="row" [allowUpdating]="true" [allowDeleting]="true" />
+  <dxo-editing mode="row" [allowUpdating]="true" [allowDeleting]="true" [allowAdding]="true" />
   <dxi-column type="buttons" minWidth="100" fixed="right">
     @if(!editingGrid()) {
     <dxi-button name="detail" icon="info" [onClick]="goToDetail"></dxi-button>
@@ -50,3 +50,4 @@
     }
   </dxi-column>
 </dx-data-grid>
+}

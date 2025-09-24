@@ -1,10 +1,8 @@
-export class Order {
-  constructor(
-    public id: number,
-    public customerName: string,
-    public orderDate: Date,
-    public expectedDeliveryDate: Date,
-    public amount: number,
-    public productId: number
-  ) {}
+export interface Order {
+  id: number;
+  customerName: string;
+  orderDate: string;
+  expectedDeliveryDate: string;
+  amount: number;
+  productId: number;
 }

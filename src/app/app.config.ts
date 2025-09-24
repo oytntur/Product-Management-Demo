@@ -24,7 +24,7 @@ export const appConfig: ApplicationConfig = {
     {
       provide: API_CONFIG,
       useValue: {
-        URL: 'https://northwind.vercel.app/api',
+        URL: 'http://localhost:3000',
         API_KEY: 'your-api-key-here',
       },
     },

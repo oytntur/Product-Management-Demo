@@ -73,18 +73,31 @@ export class HomeComponent {
   );
 
   private buildDashboard(products: Product[], orders: Order[]): DashboardViewModel {
+    const lowStockThreshold = 20;
+
     const totalProducts = products.length;
     const activeProducts = products.filter((product) => !product.discontinued).length;
-    const lowStockItems = products
-      .filter((product) => product.unitsInStock <= Math.max(product.reorderLevel, 10))
-      .sort((a, b) => a.unitsInStock - b.unitsInStock)
-      .slice(0, 5);
 
-    const shippedOrders = orders.filter((order) => this.isOrderShipped(order));
-    const pendingOrders = orders.length - shippedOrders.length;
-
-    const revenue = orders.reduce((total, order) => total + this.computeOrderTotal(order), 0);
+    const revenue = orders.reduce(
+      (total, order) => total + this.computeOrderValue(order, products),
+      0
+    );
     const averageOrderValue = orders.length ? revenue / orders.length : 0;
+
+    const deliveredOrders = orders.filter((order) => this.isOrderDelivered(order));
+    const pendingOrders = orders.length - deliveredOrders.length;
+
+    const lowStockItems = products
+      .filter((product) => (product.unitsInStock ?? 0) <= lowStockThreshold)
+      .sort((a, b) => (a.unitsInStock ?? 0) - (b.unitsInStock ?? 0))
+      .slice(0, 5)
+      .map<LowStockRow>((product) => ({
+        id: product.id,
+        name: product.name,
+        unitsInStock: product.unitsInStock ?? 0,
+        reorderLevel: lowStockThreshold,
+        status: (product.unitsInStock ?? 0) === 0 ? 'critical' : 'warning',
+      }));
 
     const summary: DashboardSummaryCard[] = [
       {
@@ -96,17 +109,17 @@ export class HomeComponent {
         format: 'number',
       },
       {
-        label: 'Bekleyen Sipariş',
-        value: pendingOrders,
-        caption: `${shippedOrders.length} gönderildi`,
+        label: 'Toplam Sipariş',
+        value: orders.length,
+        caption: `${deliveredOrders.length} teslim edildi`,
         icon: 'fas fa-clipboard-check',
         variant: 'warning',
         format: 'number',
       },
       {
-        label: 'Ortalama Sipariş Tutarı',
-        value: averageOrderValue,
-        caption: 'Tüm siparişlerin ortalaması',
+        label: 'Tahmini Ciro',
+        value: revenue,
+        caption: 'Siparişlerden hesaplandı',
         icon: 'fas fa-dollar-sign',
         variant: 'success',
         format: 'currency',
@@ -114,35 +127,27 @@ export class HomeComponent {
       {
         label: 'Düşük Stoklu Ürün',
         value: lowStockItems.length,
-        caption: 'Yeniden sipariş eşiğinin altında',
+        caption: 'Eşik altındaki ürünler',
         icon: 'fas fa-exclamation-triangle',
         variant: 'info',
         format: 'number',
       },
     ];
 
-    const lowStock: LowStockRow[] = lowStockItems.map((product) => ({
-      id: product.id,
-      name: product.name,
-      unitsInStock: product.unitsInStock,
-      reorderLevel: product.reorderLevel,
-      status: product.unitsInStock === 0 ? 'critical' : 'warning',
-    }));
-
     const recentOrders: RecentOrderRow[] = [...orders]
       .sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime())
       .slice(0, 5)
       .map((order) => ({
         id: order.id,
-        customer: order.customerId,
+        customer: order.customerName,
         date: order.orderDate,
-        status: this.isOrderShipped(order) ? 'Gönderildi' : 'Hazırlanıyor',
-        total: this.computeOrderTotal(order),
+        status: this.isOrderDelivered(order) ? 'Gönderildi' : 'Hazırlanıyor',
+        total: this.computeOrderValue(order, products),
       }));
 
     return {
       summary,
-      lowStock,
+      lowStock: lowStockItems,
       recentOrders,
       totals: {
         revenue,
@@ -152,14 +157,18 @@ export class HomeComponent {
     };
   }
 
-  private computeOrderTotal(order: Order): number {
-    return order.details.reduce((total, detail) => {
-      const discountMultiplier = 1 - (detail.discount ?? 0);
-      return total + detail.unitPrice * detail.quantity * discountMultiplier;
-    }, 0);
+  private computeOrderValue(order: Order, products: Product[]): number {
+    const product = products.find((item) => item.id === order.productId);
+    return (product?.unitPrice ?? 0) * (order.amount ?? 0);
   }
 
-  private isOrderShipped(order: Order): boolean {
-    return Boolean(order.shippedDate && order.shippedDate.trim().length > 0);
+  private isOrderDelivered(order: Order): boolean {
+    const expected = new Date(order.expectedDeliveryDate ?? '');
+    if (Number.isNaN(expected.getTime())) {
+      return false;
+    }
+
+    const now = new Date();
+    return expected.getTime() <= now.getTime();
   }
 }

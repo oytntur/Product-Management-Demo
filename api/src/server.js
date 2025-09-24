@@ -4,13 +4,42 @@ const http = require('http');
 const { URL } = require('url');
 
 const { registerUser, authenticateUser } = require('./auth');
-const { listProducts, addOrder, listOrdersForUser, getProductById } = require('./store');
+const {
+  listProducts,
+  addOrder,
+  listOrdersForUser,
+  getProductSnapshotById,
+  getOrderForUser,
+  updateOrderForUser,
+  deleteOrderForUser,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+} = require('./store');
 const { sign, verify } = require('./utils/jwt');
 
 const PORT = Number(process.env.PORT) || 3000;
 const HOST = process.env.HOST || '127.0.0.1';
 const JWT_SECRET = process.env.JWT_SECRET || 'change_me';
 const TOKEN_TTL_SECONDS = 60 * 60; // 1 hour
+
+const ALLOWED_ORIGINS = new Set([
+  'http://localhost:4200',
+  'http://127.0.0.1:4200',
+]);
+
+const applyCors = (req, res) => {
+  const origin = req.headers.origin;
+  if (origin && ALLOWED_ORIGINS.has(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+  }
+
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+};
 
 const sendJson = (res, statusCode, data) => {
   res.writeHead(statusCode, { 'Content-Type': 'application/json' });
@@ -71,107 +100,263 @@ const getAuthenticatedUser = (req) => {
 
 const handleRequest = async (req, res) => {
   if (req.method === 'OPTIONS') {
-    res.writeHead(204, {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type,Authorization',
-    });
+    applyCors(req, res);
+    res.writeHead(204);
     res.end();
     return;
   }
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  applyCors(req, res);
 
   const requestUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   const { pathname } = requestUrl;
   const method = (req.method || 'GET').toUpperCase();
+  const segments = pathname.split('/').filter(Boolean);
 
-  if (method === 'POST' && pathname === '/auth/register') {
-    const body = await readJsonBody(req);
-    const user = registerUser({
-      email: body.email,
-      password: body.password,
-      name: body.name,
-    });
-    sendJson(res, 201, { user });
+  if (segments[0] === 'auth') {
+    if (segments.length === 2 && method === 'POST' && segments[1] === 'register') {
+      const body = await readJsonBody(req);
+      const user = registerUser({
+        email: body.email,
+        password: body.password,
+        name: body.name,
+      });
+      sendJson(res, 201, { user });
+      return;
+    }
+
+    if (segments.length === 2 && method === 'POST' && segments[1] === 'login') {
+      const body = await readJsonBody(req);
+      const user = authenticateUser({
+        email: body.email,
+        password: body.password,
+      });
+      const token = sign({ sub: user.id, email: user.email, name: user.name }, JWT_SECRET, {
+        expiresInSeconds: TOKEN_TTL_SECONDS,
+      });
+      sendJson(res, 200, { token, user });
+      return;
+    }
+
+    sendJson(res, 404, { error: 'Not found' });
     return;
   }
 
-  if (method === 'POST' && pathname === '/auth/login') {
-    const body = await readJsonBody(req);
-    const user = authenticateUser({
-      email: body.email,
-      password: body.password,
-    });
-    const token = sign({ sub: user.id, email: user.email, name: user.name }, JWT_SECRET, {
-      expiresInSeconds: TOKEN_TTL_SECONDS,
-    });
-    sendJson(res, 200, { token, user });
-    return;
-  }
-
-  if (method === 'GET' && pathname === '/products') {
+  if (segments[0] === 'products') {
     getAuthenticatedUser(req);
-    const products = listProducts();
-    sendJson(res, 200, { products });
+
+    if (segments.length === 1) {
+      if (method === 'GET') {
+        const products = listProducts();
+        sendJson(res, 200, { products });
+        return;
+      }
+
+      if (method === 'POST') {
+        const body = await readJsonBody(req);
+        const product = createProduct({
+          name: body.name,
+          unitsInStock: body.unitsInStock,
+          unitPrice: body.unitPrice,
+          unit: body.unit,
+          discontinued: body.discontinued,
+        });
+        sendJson(res, 201, { product });
+        return;
+      }
+
+      const err = new Error('Method not allowed');
+      err.statusCode = 405;
+      throw err;
+    }
+
+    if (segments.length === 2) {
+      const productId = Number.parseInt(segments[1], 10);
+      if (!Number.isInteger(productId)) {
+        const err = new Error('Product id must be an integer');
+        err.statusCode = 400;
+        throw err;
+      }
+
+      if (method === 'GET') {
+        const product = getProductSnapshotById(productId);
+        if (!product) {
+          const err = new Error('Product not found');
+          err.statusCode = 404;
+          throw err;
+        }
+        sendJson(res, 200, { product });
+        return;
+      }
+
+      if (method === 'PUT') {
+        const body = await readJsonBody(req);
+        const product = updateProduct(productId, body || {});
+        sendJson(res, 200, { product });
+        return;
+      }
+
+      if (method === 'DELETE') {
+        const product = deleteProduct(productId);
+        sendJson(res, 200, { product });
+        return;
+      }
+
+      const err = new Error('Method not allowed');
+      err.statusCode = 405;
+      throw err;
+    }
+
+    sendJson(res, 404, { error: 'Not found' });
     return;
   }
 
-  if (method === 'GET' && pathname === '/orders') {
+  if (segments[0] === 'orders') {
     const claims = getAuthenticatedUser(req);
-    const orders = listOrdersForUser(claims.sub);
-    sendJson(res, 200, { orders });
-    return;
-  }
 
-  if (method === 'POST' && pathname === '/orders') {
-    const claims = getAuthenticatedUser(req);
-    const body = await readJsonBody(req);
+    if (segments.length === 1) {
+      if (method === 'GET') {
+        const orders = listOrdersForUser(claims.sub);
+        sendJson(res, 200, { orders });
+        return;
+      }
 
-    const productId = Number(body.productId);
-    const amount = Number(body.amount);
-    const expectedDeliveryDateInput = body.expectedDeliveryDate;
-    const customerName = typeof body.customerName === 'string' && body.customerName.trim()
-      ? body.customerName.trim()
-      : claims.name;
+      if (method === 'POST') {
+        const body = await readJsonBody(req);
 
-    if (!Number.isInteger(productId)) {
-      const err = new Error('productId must be an integer');
-      err.statusCode = 400;
+        const productId = Number(body.productId);
+        const amount = Number(body.amount);
+        const expectedDeliveryDateInput = body.expectedDeliveryDate;
+        const customerName = typeof body.customerName === 'string' && body.customerName.trim()
+          ? body.customerName.trim()
+          : claims.name;
+
+        if (!Number.isInteger(productId)) {
+          const err = new Error('productId must be an integer');
+          err.statusCode = 400;
+          throw err;
+        }
+
+        if (!Number.isFinite(amount) || amount <= 0) {
+          const err = new Error('amount must be a positive number');
+          err.statusCode = 400;
+          throw err;
+        }
+
+        const expectedDeliveryDate = new Date(expectedDeliveryDateInput);
+        if (Number.isNaN(expectedDeliveryDate.getTime())) {
+          const err = new Error('expectedDeliveryDate must be a valid date');
+          err.statusCode = 400;
+          throw err;
+        }
+
+        const order = addOrder({
+          userId: claims.sub,
+          customerName,
+          orderDate: new Date(),
+          expectedDeliveryDate,
+          amount,
+          productId,
+        });
+
+        sendJson(res, 201, { order });
+        return;
+      }
+
+      const err = new Error('Method not allowed');
+      err.statusCode = 405;
       throw err;
     }
 
-    if (!Number.isFinite(amount) || amount <= 0) {
-      const err = new Error('amount must be a positive number');
-      err.statusCode = 400;
+    if (segments.length === 2) {
+      const orderId = Number.parseInt(segments[1], 10);
+      if (!Number.isInteger(orderId)) {
+        const err = new Error('Order id must be an integer');
+        err.statusCode = 400;
+        throw err;
+      }
+
+      if (method === 'GET') {
+        const order = getOrderForUser(orderId, claims.sub);
+        if (!order) {
+          const err = new Error('Order not found');
+          err.statusCode = 404;
+          throw err;
+        }
+        sendJson(res, 200, { order });
+        return;
+      }
+
+      if (method === 'PUT') {
+        const body = await readJsonBody(req);
+        const updates = {};
+
+        if (body.productId !== undefined) {
+          const nextProductId = Number(body.productId);
+          if (!Number.isInteger(nextProductId)) {
+            const err = new Error('productId must be an integer');
+            err.statusCode = 400;
+            throw err;
+          }
+          updates.productId = nextProductId;
+        }
+
+        if (body.amount !== undefined) {
+          const nextAmount = Number(body.amount);
+          if (!Number.isFinite(nextAmount) || nextAmount <= 0) {
+            const err = new Error('amount must be a positive number');
+            err.statusCode = 400;
+            throw err;
+          }
+          updates.amount = nextAmount;
+        }
+
+        if (body.expectedDeliveryDate !== undefined) {
+          const nextExpected = new Date(body.expectedDeliveryDate);
+          if (Number.isNaN(nextExpected.getTime())) {
+            const err = new Error('expectedDeliveryDate must be a valid date');
+            err.statusCode = 400;
+            throw err;
+          }
+          updates.expectedDeliveryDate = nextExpected.toISOString();
+        }
+
+        if (body.orderDate !== undefined) {
+          const nextOrderDate = new Date(body.orderDate);
+          if (Number.isNaN(nextOrderDate.getTime())) {
+            const err = new Error('orderDate must be a valid date');
+            err.statusCode = 400;
+            throw err;
+          }
+          updates.orderDate = nextOrderDate.toISOString();
+        }
+
+        if (body.customerName !== undefined) {
+          if (typeof body.customerName !== 'string' || !body.customerName.trim()) {
+            const err = new Error('customerName must be a non-empty string');
+            err.statusCode = 400;
+            throw err;
+          }
+          updates.customerName = body.customerName.trim();
+        }
+
+        const order = updateOrderForUser(orderId, claims.sub, updates);
+        sendJson(res, 200, { order });
+        return;
+      }
+
+      if (method === 'DELETE') {
+        const order = deleteOrderForUser(orderId, claims.sub);
+        sendJson(res, 200, { order });
+        return;
+      }
+
+      const err = new Error('Method not allowed');
+      err.statusCode = 405;
       throw err;
     }
 
-    const expectedDeliveryDate = new Date(expectedDeliveryDateInput);
-    if (Number.isNaN(expectedDeliveryDate.getTime())) {
-      const err = new Error('expectedDeliveryDate must be a valid date');
-      err.statusCode = 400;
-      throw err;
-    }
-
-    const product = getProductById(productId);
-    if (!product) {
-      const err = new Error('Product not found');
-      err.statusCode = 404;
-      throw err;
-    }
-
-    const order = addOrder({
-      userId: claims.sub,
-      customerName,
-      orderDate: new Date(),
-      expectedDeliveryDate,
-      amount,
-      productId,
-    });
-
-    sendJson(res, 201, { order });
+    sendJson(res, 404, { error: 'Not found' });
     return;
   }
 

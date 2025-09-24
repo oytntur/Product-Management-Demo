@@ -34,25 +34,38 @@ export const routes: Routes = [
       },
       {
         path: 'products',
-        title: 'Ürünler',
-        loadComponent: () =>
-          import('./pages/admin/product-list/product-list.component').then(
-            (m) => m.ProductListComponent
-          ),
-      },
-      {
-        path: 'products/:productId',
-        title: 'Ürün Detayı',
-        loadComponent: () =>
-          import('./pages/admin/product/product.component').then((m) => m.ProductComponent),
-      },
-      {
-        path: 'products/:productId/edit',
-        title: 'Ürünü Düzenle',
-        loadComponent: () =>
-          import('./pages/admin/product-add/product-edit.component').then(
-            (m) => m.ProductEditComponent
-          ),
+        children: [
+          {
+            path: '',
+            title: 'Ürünler',
+            loadComponent: () =>
+              import('./pages/admin/product-list/product-list.component').then(
+                (m) => m.ProductListComponent
+              ),
+          },
+          {
+            path: 'new',
+            title: 'Ürün Ekle',
+            loadComponent: () =>
+              import('./pages/admin/product-edit/product-edit.component').then(
+                (m) => m.ProductEditComponent
+              ),
+          },
+          {
+            path: ':productId/edit',
+            title: 'Ürünü Düzenle',
+            loadComponent: () =>
+              import('./pages/admin/product-edit/product-edit.component').then(
+                (m) => m.ProductEditComponent
+              ),
+          },
+          {
+            path: ':productId',
+            title: 'Ürün Detayı',
+            loadComponent: () =>
+              import('./pages/admin/product/product.component').then((m) => m.ProductComponent),
+          },
+        ],
       },
     ],
   },

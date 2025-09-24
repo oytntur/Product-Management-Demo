@@ -9,14 +9,15 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
 
   const token = authService.getAccessToken();
-  const isAuthRequest = req.url.includes('/auth/login');
-  const authReq = token && !isAuthRequest
-    ? req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-    : req;
+  const isAuthRequest = /\/auth\/(login|register)/.test(req.url);
+  const authReq =
+    token && !isAuthRequest
+      ? req.clone({
+          setHeaders: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+      : req;
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
