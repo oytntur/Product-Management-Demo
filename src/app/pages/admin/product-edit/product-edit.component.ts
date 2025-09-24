@@ -15,6 +15,7 @@ import {
 } from '../../../helpers/services/product.service';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { of, switchMap } from 'rxjs';
+import { Router } from '@angular/router';
 
 type OrderForm = FormGroup<{
   id: FormControl<number>; // no nulls
@@ -46,6 +47,7 @@ type ProductForm = FormGroup<{
 export class ProductEditComponent {
   fb = inject(NonNullableFormBuilder);
   productService = inject(ProductService);
+  private readonly router = inject(Router);
 
   productId = input<number | undefined>(undefined);
   productId$ = toObservable(this.productId);
@@ -169,22 +171,30 @@ export class ProductEditComponent {
     const ordersPayload = this.orders.controls.map((o) => this.buildOrderPayload(o));
     this.productService
       .saveProductWithOrders(productPayload, ordersPayload, this.deletedOrderIds)
-      .subscribe(({ product, orders }) => {
-        this.form.patchValue({ id: product.id });
-        orders.forEach((order, index) => {
-          const control = this.orders.at(index);
-          if (control) {
-            control.patchValue({
-              id: order.id,
-              productId: order.productId,
-              customerName: order.customerName,
-              orderDate: order.orderDate,
-              expectedDeliveryDate: order.expectedDeliveryDate,
-              amount: order.amount,
-            });
+      .subscribe({
+        next: ({ product, orders }) => {
+          this.form.patchValue({ id: product.id });
+          orders.forEach((order, index) => {
+            const control = this.orders.at(index);
+            if (control) {
+              control.patchValue({
+                id: order.id,
+                productId: order.productId,
+                customerName: order.customerName,
+                orderDate: order.orderDate,
+                expectedDeliveryDate: order.expectedDeliveryDate,
+                amount: order.amount,
+              });
+            }
+          });
+          this.deletedOrderIds = [];
+          if (product.id) {
+            this.router.navigate(['/admin/products', product.id]);
           }
-        });
-        this.deletedOrderIds = [];
+        },
+        error: (error) => {
+          console.error('Failed to save product with orders', error);
+        },
       });
   }
 }

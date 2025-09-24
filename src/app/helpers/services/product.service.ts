@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { API_CONFIG } from '../tokens';
-import { forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
+import { defer, firstValueFrom, map, Observable, tap } from 'rxjs';
 import { Product } from '../models/product.model';
 import { showToast } from '../ui/toast.helper';
 import {
@@ -34,6 +34,8 @@ export interface ProductOrderPayload {
   productId?: number | null;
 }
 
+type RollbackAction = () => Promise<void>;
+
 @Injectable()
 export class ProductService {
   private readonly apiConfig = inject(API_CONFIG);
@@ -59,35 +61,57 @@ export class ProductService {
       .pipe(map((response) => response.product));
   }
 
-  createProduct(payload: ProductCreatePayload): Observable<Product> {
+  createProduct(
+    payload: ProductCreatePayload,
+    options: { notify?: boolean } = {}
+  ): Observable<Product> {
     const body = this.toProductBody(payload);
 
     console.log('Creating product with body:', body);
+    const { notify = true } = options;
 
     return this.httpClient
       .post<{ product: Product }>(this.buildUrl('/products'), body)
       .pipe(
-        tap(() => showToast('Product added successfully', 'success')),
+        tap(() => {
+          if (notify) {
+            showToast('Product added successfully', 'success');
+          }
+        }),
         map((response) => response.product)
       );
   }
 
-  updateProduct(id: number, updates: ProductUpdatePayload): Observable<Product> {
+  updateProduct(
+    id: number,
+    updates: ProductUpdatePayload,
+    options: { notify?: boolean } = {}
+  ): Observable<Product> {
     const body = this.toProductBody(updates);
+    const { notify = true } = options;
 
     return this.httpClient
       .put<{ product: Product }>(this.buildUrl(`/products/${id}`), body)
       .pipe(
-        tap(() => showToast('Product updated successfully', 'success')),
+        tap(() => {
+          if (notify) {
+            showToast('Product updated successfully', 'success');
+          }
+        }),
         map((response) => response.product)
       );
   }
 
-  deleteProduct(id: number): Observable<Product> {
+  deleteProduct(id: number, options: { notify?: boolean } = {}): Observable<Product> {
+    const { notify = true } = options;
     return this.httpClient
       .delete<{ product: Product }>(this.buildUrl(`/products/${id}`))
       .pipe(
-        tap(() => showToast('Product removed successfully', 'success')),
+        tap(() => {
+          if (notify) {
+            showToast('Product removed successfully', 'success');
+          }
+        }),
         map((response) => response.product)
       );
   }
@@ -119,48 +143,173 @@ export class ProductService {
     orders: ProductOrderPayload[],
     deletedOrderIds: number[] = []
   ): Observable<{ product: Product; orders: Order[] }> {
-    const { id: productId, ...rest } = productPayload;
-    const productRequest$ = productId
-      ? this.updateProduct(productId, rest)
-      : this.createProduct(rest);
-
-    return productRequest$.pipe(
-      switchMap((savedProduct) => {
-        const orderRequests = orders.map((order) => {
-          const { id: orderId } = order;
-          if (orderId && orderId > 0) {
-            const updatePayload: UpdateOrderPayload = {
-              productId: savedProduct.id,
-              amount: order.amount,
-              expectedDeliveryDate: order.expectedDeliveryDate,
-              orderDate: order.orderDate,
-              customerName: order.customerName,
-            };
-            return this.orderService.updateOrder(orderId, updatePayload);
-          }
-
-          const createPayload: CreateOrderPayload = {
-            productId: savedProduct.id,
-            amount: order.amount,
-            expectedDeliveryDate: order.expectedDeliveryDate,
-            customerName: order.customerName,
-          };
-          return this.orderService.createOrder(createPayload);
-        });
-
-        const deleteRequests = deletedOrderIds.map((id) => this.orderService.deleteOrder(id));
-
-        const saveOrders$ = orderRequests.length
-          ? forkJoin(orderRequests)
-          : of([] as Order[]);
-        const deleteOrders$ = deleteRequests.length
-          ? forkJoin(deleteRequests)
-          : of([] as Order[]);
-
-        return forkJoin({ savedOrders: saveOrders$, deletedOrders: deleteOrders$ }).pipe(
-          map(({ savedOrders }) => ({ product: savedProduct, orders: savedOrders }))
-        );
-      })
+    return defer(() =>
+      this.executeSaveProductWithOrders(productPayload, orders, deletedOrderIds)
     );
+  }
+
+  private async executeSaveProductWithOrders(
+    productPayload: ProductSavePayload,
+    orders: ProductOrderPayload[],
+    deletedOrderIds: number[]
+  ): Promise<{ product: Product; orders: Order[] }> {
+    const rollbackActions: RollbackAction[] = [];
+
+    try {
+      const savedProduct = await this.saveProductTransactional(productPayload, rollbackActions);
+      const savedOrders = await this.saveOrUpdateOrdersTransactional(
+        savedProduct.id,
+        orders,
+        rollbackActions
+      );
+      await this.deleteOrdersTransactional(deletedOrderIds, rollbackActions);
+
+      return { product: savedProduct, orders: savedOrders };
+    } catch (error) {
+      await this.runRollbacks(rollbackActions);
+      throw error;
+    }
+  }
+
+  private async saveProductTransactional(
+    productPayload: ProductSavePayload,
+    rollbackActions: RollbackAction[]
+  ): Promise<Product> {
+    const { id, ...rest } = productPayload;
+
+    if (id && id > 0) {
+      const originalProduct = await firstValueFrom(this.getProductById(id));
+      const updatedProduct = await firstValueFrom(this.updateProduct(id, rest));
+      rollbackActions.push(async () => {
+        await firstValueFrom(
+          this.updateProduct(id, this.toProductUpdatePayload(originalProduct), { notify: false })
+        );
+      });
+      return updatedProduct;
+    }
+
+    const createdProduct = await firstValueFrom(this.createProduct(rest));
+    rollbackActions.push(async () => {
+      await firstValueFrom(this.deleteProduct(createdProduct.id, { notify: false }));
+    });
+    return createdProduct;
+  }
+
+  private async saveOrUpdateOrdersTransactional(
+    productId: number,
+    orders: ProductOrderPayload[],
+    rollbackActions: RollbackAction[]
+  ): Promise<Order[]> {
+    const persistedOrders: Order[] = [];
+
+    for (const orderPayload of orders) {
+      if (orderPayload.id && orderPayload.id > 0) {
+        const originalOrder = await firstValueFrom(
+          this.orderService.getOrderById(orderPayload.id)
+        );
+        const updatePayload: UpdateOrderPayload = {
+          productId,
+          amount: orderPayload.amount,
+          expectedDeliveryDate: orderPayload.expectedDeliveryDate,
+          orderDate: orderPayload.orderDate,
+          customerName: orderPayload.customerName,
+        };
+        const updatedOrder = await firstValueFrom(
+          this.orderService.updateOrder(orderPayload.id, updatePayload)
+        );
+        rollbackActions.push(async () => {
+          await firstValueFrom(
+            this.orderService.updateOrder(
+              orderPayload.id!,
+              this.toOrderUpdatePayload(originalOrder),
+              { notify: false }
+            )
+          );
+        });
+        persistedOrders.push(updatedOrder);
+        continue;
+      }
+
+      const createPayload: CreateOrderPayload = {
+        productId,
+        amount: orderPayload.amount,
+        expectedDeliveryDate: orderPayload.expectedDeliveryDate,
+        customerName: orderPayload.customerName,
+      };
+      const createdOrder = await firstValueFrom(
+        this.orderService.createOrder(createPayload)
+      );
+      rollbackActions.push(async () => {
+        await firstValueFrom(
+          this.orderService.deleteOrder(createdOrder.id, { notify: false })
+        );
+      });
+      persistedOrders.push(createdOrder);
+    }
+
+    return persistedOrders;
+  }
+
+  private async deleteOrdersTransactional(
+    deletedOrderIds: number[],
+    rollbackActions: RollbackAction[]
+  ): Promise<void> {
+    for (const orderId of deletedOrderIds) {
+      const deletedOrder = await firstValueFrom(
+        this.orderService.deleteOrder(orderId)
+      );
+      rollbackActions.push(async () => {
+        const recreatedOrder = await firstValueFrom(
+          this.orderService.createOrder(
+            {
+              productId: deletedOrder.productId,
+              amount: deletedOrder.amount,
+              expectedDeliveryDate: deletedOrder.expectedDeliveryDate,
+              customerName: deletedOrder.customerName,
+            },
+            { notify: false }
+          )
+        );
+        if (deletedOrder.orderDate !== recreatedOrder.orderDate) {
+          await firstValueFrom(
+            this.orderService.updateOrder(
+              recreatedOrder.id,
+              { orderDate: deletedOrder.orderDate },
+              { notify: false }
+            )
+          );
+        }
+      });
+    }
+  }
+
+  private async runRollbacks(actions: RollbackAction[]): Promise<void> {
+    for (const action of [...actions].reverse()) {
+      try {
+        await action();
+      } catch (rollbackError) {
+        console.error('Rollback action failed', rollbackError);
+      }
+    }
+  }
+
+  private toProductUpdatePayload(product: Product): ProductUpdatePayload {
+    return {
+      name: product.name,
+      unitsInStock: product.unitsInStock,
+      unitPrice: product.unitPrice,
+      unit: product.unit,
+      discontinued: product.discontinued,
+    };
+  }
+
+  private toOrderUpdatePayload(order: Order): UpdateOrderPayload {
+    return {
+      productId: order.productId,
+      amount: order.amount,
+      expectedDeliveryDate: order.expectedDeliveryDate,
+      orderDate: order.orderDate,
+      customerName: order.customerName,
+    };
   }
 }

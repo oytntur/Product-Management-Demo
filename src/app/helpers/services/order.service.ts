@@ -42,29 +42,51 @@ export class OrderService {
       .pipe(map((response) => response.order));
   }
 
-  createOrder(payload: CreateOrderPayload): Observable<Order> {
+  createOrder(
+    payload: CreateOrderPayload,
+    options: { notify?: boolean } = {}
+  ): Observable<Order> {
+    const { notify = true } = options;
     return this.httpClient
       .post<{ order: Order }>(this.buildUrl('/orders'), payload)
       .pipe(
-        tap(() => showToast('Order added successfully', 'success')),
+        tap(() => {
+          if (notify) {
+            showToast('Order added successfully', 'success');
+          }
+        }),
         map((response) => response.order)
       );
   }
 
-  updateOrder(id: number, updates: UpdateOrderPayload): Observable<Order> {
+  updateOrder(
+    id: number,
+    updates: UpdateOrderPayload,
+    options: { notify?: boolean } = {}
+  ): Observable<Order> {
+    const { notify = true } = options;
     return this.httpClient
       .put<{ order: Order }>(this.buildUrl(`/orders/${id}`), updates)
       .pipe(
-        tap(() => showToast('Order updated successfully', 'success')),
+        tap(() => {
+          if (notify) {
+            showToast('Order updated successfully', 'success');
+          }
+        }),
         map((response) => response.order)
       );
   }
 
-  deleteOrder(id: number): Observable<Order> {
+  deleteOrder(id: number, options: { notify?: boolean } = {}): Observable<Order> {
+    const { notify = true } = options;
     return this.httpClient
       .delete<{ order: Order }>(this.buildUrl(`/orders/${id}`))
       .pipe(
-        tap(() => showToast('Order removed successfully', 'success')),
+        tap(() => {
+          if (notify) {
+            showToast('Order removed successfully', 'success');
+          }
+        }),
         map((response) => response.order)
       );
   }
