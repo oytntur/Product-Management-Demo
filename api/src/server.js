@@ -23,7 +23,7 @@ const HOST = process.env.HOST || '127.0.0.1';
 const JWT_SECRET = process.env.JWT_SECRET || 'change_me';
 const TOKEN_TTL_SECONDS = 60 * 60; // 1 hour
 
-const randomDelay = (minMs = 100, maxMs = 1500) => {
+const randomDelay = (minMs = 10, maxMs = 15) => {
   const duration = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
   return new Promise((resolve) => setTimeout(resolve, duration));
 };
