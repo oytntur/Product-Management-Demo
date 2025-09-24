@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { API_CONFIG } from '../tokens';
-import { map, Observable } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { Order } from '../models/order.model';
+import { showToast } from '../ui/toast.helper';
 
 export interface CreateOrderPayload {
   productId: number;
@@ -44,19 +45,28 @@ export class OrderService {
   createOrder(payload: CreateOrderPayload): Observable<Order> {
     return this.httpClient
       .post<{ order: Order }>(this.buildUrl('/orders'), payload)
-      .pipe(map((response) => response.order));
+      .pipe(
+        tap(() => showToast('Order added successfully', 'success')),
+        map((response) => response.order)
+      );
   }
 
   updateOrder(id: number, updates: UpdateOrderPayload): Observable<Order> {
     return this.httpClient
       .put<{ order: Order }>(this.buildUrl(`/orders/${id}`), updates)
-      .pipe(map((response) => response.order));
+      .pipe(
+        tap(() => showToast('Order updated successfully', 'success')),
+        map((response) => response.order)
+      );
   }
 
   deleteOrder(id: number): Observable<Order> {
     return this.httpClient
       .delete<{ order: Order }>(this.buildUrl(`/orders/${id}`))
-      .pipe(map((response) => response.order));
+      .pipe(
+        tap(() => showToast('Order removed successfully', 'success')),
+        map((response) => response.order)
+      );
   }
 
   getOrdersByProductId(productId: number): Observable<Order[]> {

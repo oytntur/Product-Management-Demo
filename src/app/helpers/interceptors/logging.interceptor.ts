@@ -1,6 +1,6 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import notify from 'devextreme/ui/notify';
 import { catchError, throwError } from 'rxjs';
+import { showToast } from '../ui/toast.helper';
 
 type ErrorCategory =
   | 'network'
@@ -10,12 +10,6 @@ type ErrorCategory =
   | 'client'
   | 'server'
   | 'unknown';
-
-const TOAST_POSITION = {
-  at: 'bottom right',
-  my: 'bottom right',
-  offset: { x: -16, y: -16 },
-};
 
 const classifyError = (error: HttpErrorResponse): ErrorCategory => {
   if (error.status === 0) {
@@ -44,34 +38,13 @@ const classifyError = (error: HttpErrorResponse): ErrorCategory => {
 
   return 'unknown';
 };
-
-const extractDetail = (error: HttpErrorResponse): string | undefined => {
-  if (typeof error.error === 'string' && error.error.trim().length > 0) {
-    return error.error;
-  }
-
-  if (error.error && typeof error.error === 'object') {
-    const potentialMessage = (error.error as Record<string, unknown>)['message'];
-    if (typeof potentialMessage === 'string' && potentialMessage.trim().length > 0) {
-      return potentialMessage;
-    }
-  }
-
-  if (typeof error.message === 'string' && error.message.trim().length > 0) {
-    return error.message;
-  }
-
-  return undefined;
-};
-
 const withDetail = (base: string, detail?: string): string =>
   detail ? `${base}: ${detail}` : base;
 
 const buildToastOptions = (
-  category: ErrorCategory,
-  error: HttpErrorResponse
+  category: ErrorCategory
 ): { type: 'info' | 'warning' | 'error'; message: string } => {
-  const detail = extractDetail(error);
+  const baseMessage = 'There was a problem. Please try again.';
 
   switch (category) {
     case 'network':
@@ -117,14 +90,9 @@ export const loggingInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error: HttpErrorResponse) => {
       const category = classifyError(error);
       const message = `${req.method} ${req.url} failed with status ${error.status} (${category})`;
-      const toastOptions = buildToastOptions(category, error);
+      const toastOptions = buildToastOptions(category);
 
-      notify({
-        ...toastOptions,
-        displayTime: 5000,
-        closeOnClick: true,
-        position: TOAST_POSITION,
-      });
+      showToast(toastOptions.message, toastOptions.type);
 
       switch (category) {
         case 'network':
