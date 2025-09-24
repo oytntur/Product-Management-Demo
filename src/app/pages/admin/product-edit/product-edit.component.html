@@ -1,58 +1,174 @@
 <div class="container py-3">
-  <div class="card mb-3">
-    <div class="card-header bg-primary text-white">Product</div>
-    <div class="card-body">
-      <dx-form
-        [(formData)]="formData"
-        [colCount]="2"
-        labelLocation="top"
-        (onFieldDataChanged)="onDxFieldChange($event)"
-      >
-        <dxi-item dataField="name" editorType="dxTextBox" [isRequired]="true"></dxi-item>
-        <dxi-item dataField="unit" editorType="dxTextBox" [isRequired]="true"></dxi-item>
-        <dxi-item dataField="unitPrice" editorType="dxNumberBox"></dxi-item>
-        <dxi-item dataField="unitsInStock" editorType="dxNumberBox"></dxi-item>
-        <dxi-item
-          dataField="discontinued"
-          editorType="dxCheckBox"
-          [editorOptions]="{ text: 'Discontinued' }"
-        ></dxi-item>
-      </dx-form>
-    </div>
-  </div>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <div class="card mb-3">
+      <div class="card-header bg-primary text-white">Product</div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label" for="productName">Name</label>
+            <input
+              id="productName"
+              type="text"
+              class="form-control"
+              formControlName="name"
+              [class.is-invalid]="form.controls.name.invalid && form.controls.name.touched"
+            />
+            <div class="invalid-feedback">Product name is required.</div>
+          </div>
 
-  <div class="card mb-3">
-    <div class="card-header d-flex justify-content-between">
-      <span>Orders</span>
-    </div>
-    <div class="card-body">
-      <dx-data-grid
-        [dataSource]="ordersData"
-        [showBorders]="true"
-        [editing]="{ mode: 'row', allowAdding: true, allowUpdating: true, allowDeleting: true }"
-        (onRowInserted)="onOrderInserted($event)"
-        (onRowUpdated)="onOrderUpdated($event)"
-        (onRowRemoved)="onOrderRemoved($event)"
-      >
-        <dxi-column dataField="customerName">
-          <dxi-validation-rule type="required"></dxi-validation-rule>
-        </dxi-column>
-        <dxi-column dataField="orderDate" dataType="date">
-          <dxi-validation-rule type="required"></dxi-validation-rule>
-        </dxi-column>
-        <dxi-column dataField="expectedDeliveryDate" dataType="date">
-          <dxi-validation-rule type="required"></dxi-validation-rule>
-        </dxi-column>
-        <dxi-column dataField="amount" dataType="number">
-          <dxi-validation-rule type="required"></dxi-validation-rule>
-        </dxi-column>
-      </dx-data-grid>
-    </div>
-  </div>
+          <div class="col-md-6">
+            <label class="form-label" for="productUnit">Unit</label>
+            <input
+              id="productUnit"
+              type="text"
+              class="form-control"
+              formControlName="unit"
+              [class.is-invalid]="form.controls.unit.invalid && form.controls.unit.touched"
+            />
+            <div class="invalid-feedback">Unit is required.</div>
+          </div>
 
-  <div class="text-end">
-    <button class="btn btn-primary" (click)="onSubmit()" [disabled]="form.invalid">
-      Save Product
-    </button>
-  </div>
+          <div class="col-md-6">
+            <label class="form-label" for="productPrice">Unit Price</label>
+            <input
+              id="productPrice"
+              type="number"
+              class="form-control"
+              formControlName="unitPrice"
+              [class.is-invalid]="form.controls.unitPrice.invalid && form.controls.unitPrice.touched"
+              min="0"
+              step="0.01"
+            />
+            <div class="invalid-feedback">Provide a valid unit price.</div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label" for="productStock">Units In Stock</label>
+            <input
+              id="productStock"
+              type="number"
+              class="form-control"
+              formControlName="unitsInStock"
+              [class.is-invalid]="
+                form.controls.unitsInStock.invalid && form.controls.unitsInStock.touched
+              "
+              min="0"
+            />
+            <div class="invalid-feedback">Provide a non-negative stock amount.</div>
+          </div>
+
+          <div class="col-12 form-check">
+            <input
+              id="productDiscontinued"
+              type="checkbox"
+              class="form-check-input"
+              formControlName="discontinued"
+            />
+            <label class="form-check-label" for="productDiscontinued">Discontinued</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Orders</span>
+        <button type="button" class="btn btn-secondary btn-sm" (click)="addOrder()">
+          Add Order
+        </button>
+      </div>
+      <div class="card-body">
+        <ng-container formArrayName="orders">
+          <div
+            class="border rounded p-3 mb-3"
+            *ngFor="let orderGroup of orders.controls; let i = index"
+            [formGroupName]="i"
+          >
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="mb-0">Order #{{ i + 1 }}</h6>
+              <button
+                type="button"
+                class="btn btn-outline-danger btn-sm"
+                (click)="removeOrderAt(i)"
+              >
+                Remove
+              </button>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label" for="customerName-{{ i }}">Customer Name</label>
+                <input
+                  [id]="'customerName-' + i"
+                  type="text"
+                  class="form-control"
+                  formControlName="customerName"
+                  [class.is-invalid]="
+                    orderGroup.controls.customerName.invalid &&
+                    orderGroup.controls.customerName.touched
+                  "
+                />
+                <div class="invalid-feedback">Customer name is required.</div>
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label" for="orderDate-{{ i }}">Order Date</label>
+                <input
+                  [id]="'orderDate-' + i"
+                  type="date"
+                  class="form-control"
+                  formControlName="orderDate"
+                  [class.is-invalid]="
+                    orderGroup.controls.orderDate.invalid && orderGroup.controls.orderDate.touched
+                  "
+                />
+                <div class="invalid-feedback">Order date is required.</div>
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label" for="deliveryDate-{{ i }}">Delivery Date</label>
+                <input
+                  [id]="'deliveryDate-' + i"
+                  type="date"
+                  class="form-control"
+                  formControlName="expectedDeliveryDate"
+                  [class.is-invalid]="
+                    orderGroup.controls.expectedDeliveryDate.invalid &&
+                    orderGroup.controls.expectedDeliveryDate.touched
+                  "
+                />
+                <div class="invalid-feedback">Expected delivery date is required.</div>
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label" for="amount-{{ i }}">Amount</label>
+                <input
+                  [id]="'amount-' + i"
+                  type="number"
+                  class="form-control"
+                  formControlName="amount"
+                  [class.is-invalid]="
+                    orderGroup.controls.amount.invalid && orderGroup.controls.amount.touched
+                  "
+                  min="0"
+                  step="0.01"
+                />
+                <div class="invalid-feedback">Provide a valid amount.</div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="orders.length === 0" class="text-muted">
+            No orders added yet.
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="text-end">
+      <button class="btn btn-primary" type="submit" [disabled]="form.invalid">
+        Save Product
+      </button>
+    </div>
+  </form>
 </div>

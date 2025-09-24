@@ -1,9 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { API_CONFIG } from '../tokens';
-import { map, Observable, tap } from 'rxjs';
+import { forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
 import { Product } from '../models/product.model';
 import { showToast } from '../ui/toast.helper';
+import {
+  CreateOrderPayload,
+  OrderService,
+  UpdateOrderPayload,
+} from './order.service';
+import { Order } from '../models/order.model';
 
 export interface ProductCreatePayload {
   name: string;
@@ -15,11 +21,25 @@ export interface ProductCreatePayload {
 
 export type ProductUpdatePayload = Partial<ProductCreatePayload>;
 
+export interface ProductSavePayload extends ProductCreatePayload {
+  id?: number;
+}
+
+export interface ProductOrderPayload {
+  id?: number;
+  customerName: string;
+  orderDate: string;
+  expectedDeliveryDate: string;
+  amount: number;
+  productId?: number | null;
+}
+
 @Injectable()
 export class ProductService {
   private readonly apiConfig = inject(API_CONFIG);
   private readonly httpClient = inject(HttpClient);
   private readonly apiRoot = this.apiConfig.URL.replace(/\/+$/, '');
+  private readonly orderService = inject(OrderService);
 
   constructor() {}
 
@@ -92,5 +112,55 @@ export class ProductService {
     }
 
     return body;
+  }
+
+  saveProductWithOrders(
+    productPayload: ProductSavePayload,
+    orders: ProductOrderPayload[],
+    deletedOrderIds: number[] = []
+  ): Observable<{ product: Product; orders: Order[] }> {
+    const { id: productId, ...rest } = productPayload;
+    const productRequest$ = productId
+      ? this.updateProduct(productId, rest)
+      : this.createProduct(rest);
+
+    return productRequest$.pipe(
+      switchMap((savedProduct) => {
+        const orderRequests = orders.map((order) => {
+          const { id: orderId } = order;
+          if (orderId && orderId > 0) {
+            const updatePayload: UpdateOrderPayload = {
+              productId: savedProduct.id,
+              amount: order.amount,
+              expectedDeliveryDate: order.expectedDeliveryDate,
+              orderDate: order.orderDate,
+              customerName: order.customerName,
+            };
+            return this.orderService.updateOrder(orderId, updatePayload);
+          }
+
+          const createPayload: CreateOrderPayload = {
+            productId: savedProduct.id,
+            amount: order.amount,
+            expectedDeliveryDate: order.expectedDeliveryDate,
+            customerName: order.customerName,
+          };
+          return this.orderService.createOrder(createPayload);
+        });
+
+        const deleteRequests = deletedOrderIds.map((id) => this.orderService.deleteOrder(id));
+
+        const saveOrders$ = orderRequests.length
+          ? forkJoin(orderRequests)
+          : of([] as Order[]);
+        const deleteOrders$ = deleteRequests.length
+          ? forkJoin(deleteRequests)
+          : of([] as Order[]);
+
+        return forkJoin({ savedOrders: saveOrders$, deletedOrders: deleteOrders$ }).pipe(
+          map(({ savedOrders }) => ({ product: savedProduct, orders: savedOrders }))
+        );
+      })
+    );
   }
 }

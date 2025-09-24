@@ -1,12 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-  model,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   FormArray,
   FormControl,
@@ -15,12 +8,13 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { DxDataGridModule, DxFormModule } from 'devextreme-angular';
-import { ProductService } from '../../../helpers/services/product.service';
-import { OrderService } from '../../../helpers/services/order.service';
+import {
+  ProductOrderPayload,
+  ProductSavePayload,
+  ProductService,
+} from '../../../helpers/services/product.service';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { of, switchMap } from 'rxjs';
-import { DataSource } from 'devextreme/common/data';
 
 type OrderForm = FormGroup<{
   id: FormControl<number>; // no nulls
@@ -41,45 +35,20 @@ type ProductForm = FormGroup<{
   orders: FormArray<OrderForm>;
 }>;
 
-class Order {
-  constructor(
-    public id: number,
-    public customerName: string,
-    public orderDate: string, // "yyyy-MM-dd"
-    public expectedDeliveryDate: string, // "yyyy-MM-dd"
-    public amount: number,
-    public productId?: number
-  ) {}
-}
-
-class Product {
-  constructor(
-    public id: number,
-    public name: string,
-    public unitsInStock: number,
-    public unitPrice: number,
-    public unit: string,
-    public discontinued: boolean,
-    public orders: Order[] = []
-  ) {}
-}
-
 @Component({
   selector: 'app-admin-product-edit',
   standalone: true,
   templateUrl: './product-edit.component.html',
   styleUrls: ['./product-edit.component.scss'],
-  imports: [ReactiveFormsModule, DxFormModule, DxDataGridModule],
+  imports: [CommonModule, ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductEditComponent {
   fb = inject(NonNullableFormBuilder);
   productService = inject(ProductService);
-  orderService = inject(OrderService);
 
   productId = input<number | undefined>(undefined);
   productId$ = toObservable(this.productId);
-  isEditMode = computed(() => !!this.productId());
 
   form: ProductForm = this.fb.group({
     id: this.fb.control(0),
@@ -91,9 +60,7 @@ export class ProductEditComponent {
     orders: this.fb.array<OrderForm>([]),
   });
 
-  formData = model<Product>();
-  ordersData = new DataSource({ store: [] });
-  productOrders = signal<Order[]>([]);
+  private deletedOrderIds: number[] = [];
 
   constructor() {
     this.productId$
@@ -107,24 +74,9 @@ export class ProductEditComponent {
         })
       )
       .subscribe((product) => {
+        this.deletedOrderIds = [];
+        this.orders.clear();
         if (product) {
-          const ordersFbArray = this.fb.array<OrderForm>(
-            product.orders.map((o) =>
-              this.fb.group({
-                id: this.fb.control(o.id),
-                customerName: this.fb.control(o.customerName, [Validators.required]),
-                orderDate: this.fb.control(o.orderDate, [Validators.required]),
-                expectedDeliveryDate: this.fb.control(o.expectedDeliveryDate, [
-                  Validators.required,
-                ]),
-                amount: this.fb.control(o.amount, [Validators.required, Validators.min(0)]),
-                productId: this.fb.control<number | null | undefined>(o.productId),
-              })
-            )
-          );
-          console.log('Rebuilt Orders FormArray:', ordersFbArray);
-          console.log('Orders fb array rawvalue:', ordersFbArray.getRawValue());
-          console.log('Orders fb array value:', ordersFbArray.value);
           this.form.reset({
             id: product.id,
             name: product.name,
@@ -136,8 +88,15 @@ export class ProductEditComponent {
           product.orders.forEach((productOrder) => {
             this.orders.push(this.newOrderGroup(productOrder));
           });
-          this.productOrders.set(product.orders);
-          this.syncToDx();
+        } else {
+          this.form.reset({
+            id: 0,
+            name: '',
+            unitsInStock: 0,
+            unitPrice: 0,
+            unit: '',
+            discontinued: false,
+          });
         }
       });
   }
@@ -150,7 +109,7 @@ export class ProductEditComponent {
     return new Date().toISOString().slice(0, 10);
   }
 
-  private newOrderGroup(seed?: Partial<Order>): OrderForm {
+  private newOrderGroup(seed?: Partial<ProductOrderPayload>): OrderForm {
     return this.fb.group({
       id: this.fb.control(seed?.id ?? 0),
       customerName: this.fb.control(seed?.customerName ?? '', [Validators.required]),
@@ -163,129 +122,69 @@ export class ProductEditComponent {
     });
   }
 
-  addOrder(seed?: Partial<Order>) {
+  addOrder(seed?: Partial<ProductOrderPayload>) {
     this.orders.push(this.newOrderGroup(seed));
-    this.syncToDx();
   }
 
   removeOrderAt(i: number) {
-    this.orders.removeAt(i);
-    this.syncToDx();
-  }
-
-  private syncToDx() {
-    const v = this.form.getRawValue();
-    console.log('Syncing to DX:', v);
-    this.formData.set({ ...v, orders: this.productOrders() });
-    const orders = this.productOrders().map(
-      (o) => new Order(o.id, o.customerName, o.orderDate, o.expectedDeliveryDate, o.amount)
-    );
-    const ordersStore = this.ordersData.store();
-    orders.forEach((element) => {
-      console.log('Inserting to DX:', element);
-      ordersStore.insert(element);
-    });
-    this.ordersData.load();
-  }
-
-  onDxFieldChange(e: any) {
-    const { dataField, value } = e;
-    if (dataField && (this.form.controls as any)[dataField]) {
-      (this.form.controls as any)[dataField].setValue(value);
+    const orderGroup = this.orders.at(i);
+    if (!orderGroup) {
+      return;
     }
+    const orderId = orderGroup.controls.id.value;
+    if (orderId && orderId > 0 && !this.deletedOrderIds.includes(orderId)) {
+      this.deletedOrderIds.push(orderId);
+    }
+    this.orders.removeAt(i);
   }
 
-  onOrderInserted(e: any) {
-    this.orders.push(this.newOrderGroup(e.data));
-    this.syncToDx();
-  }
-  onOrderUpdated(e: any) {
-    const idx = e.component.getRowIndexByKey(e.key);
-    if (idx > -1) this.orders.at(idx).patchValue(e.data);
-    this.syncToDx();
-  }
-  onOrderRemoved(e: any) {
-    const idx = e.component.getRowIndexByKey(e.key);
-    if (idx > -1) this.removeOrderAt(idx);
-  }
-
-  private buildOrderPayload(o: OrderForm, productId: number): Order {
+  private buildOrderPayload(o: OrderForm): ProductOrderPayload {
     const v = o.getRawValue();
-    return new Order(
-      v.id,
-      v.customerName,
-      v.orderDate,
-      v.expectedDeliveryDate,
-      v.amount,
-      productId
-    );
+    return {
+      id: v.id && v.id > 0 ? v.id : undefined,
+      customerName: v.customerName,
+      orderDate: v.orderDate,
+      expectedDeliveryDate: v.expectedDeliveryDate,
+      amount: v.amount,
+      productId: v.productId ?? undefined,
+    };
   }
 
-  private buildPayload(): Product {
+  private buildPayload(): ProductSavePayload {
     const v = this.form.getRawValue();
-    return new Product(v.id, v.name, v.unitsInStock, v.unitPrice, v.unit, v.discontinued);
+    return {
+      id: v.id && v.id > 0 ? v.id : undefined,
+      name: v.name,
+      unitsInStock: v.unitsInStock,
+      unitPrice: v.unitPrice,
+      unit: v.unit,
+      discontinued: v.discontinued,
+    };
   }
 
   onSubmit() {
     this.form.markAllAsTouched();
     if (this.form.invalid) return;
-    const payload = this.buildPayload();
-    console.log('DX Payload:', payload);
-
-    if (this.isEditMode()) {
-      this.productService.updateProduct(payload.id, payload).subscribe((updatedProduct) => {
-        console.log('Updated Product:', updatedProduct);
-        const productId = updatedProduct.id;
-
-        const orderPayloads = this.orders.controls.map((o) => this.buildOrderPayload(o, productId));
-        console.log('Order Payloads:', orderPayloads);
-
-        // Save orders sequentially (could be optimized with forkJoin if needed)
-        orderPayloads.forEach((order) => {
-          if (order.id && order.id > 0) {
-            console.log('Updating Order ID:', order.id, order);
-            this.orderService.updateOrder(order.id, order).subscribe((updatedOrder) => {
-              console.log('Updated Order:', updatedOrder);
-            });
-            return;
-          }
-          console.log('Creating Order for Product ID:', productId, order);
-          this.orderService
-            .createOrder({
-              amount: order.amount,
+    const productPayload = this.buildPayload();
+    const ordersPayload = this.orders.controls.map((o) => this.buildOrderPayload(o));
+    this.productService
+      .saveProductWithOrders(productPayload, ordersPayload, this.deletedOrderIds)
+      .subscribe(({ product, orders }) => {
+        this.form.patchValue({ id: product.id });
+        orders.forEach((order, index) => {
+          const control = this.orders.at(index);
+          if (control) {
+            control.patchValue({
+              id: order.id,
+              productId: order.productId,
               customerName: order.customerName,
+              orderDate: order.orderDate,
               expectedDeliveryDate: order.expectedDeliveryDate,
-              productId: productId,
-            })
-            .subscribe((createdOrder) => {
-              console.log('Created Order:', createdOrder);
+              amount: order.amount,
             });
+          }
         });
+        this.deletedOrderIds = [];
       });
-      return;
-    }
-
-    this.productService.createProduct(payload).subscribe((createdProduct) => {
-      console.log('Created Product:', createdProduct);
-      const productId = createdProduct.id;
-
-      const orderPayloads = this.orders.controls.map((o) => this.buildOrderPayload(o, productId));
-      console.log('Order Payloads:', orderPayloads);
-
-      // Save orders sequentially (could be optimized with forkJoin if needed)
-      orderPayloads.forEach((order) => {
-        this.orderService
-          .createOrder({
-            amount: order.amount,
-            customerName: order.customerName,
-            expectedDeliveryDate: order.expectedDeliveryDate,
-            productId: productId,
-          })
-          .subscribe((createdOrder) => {
-            console.log('Created Order:', createdOrder);
-          });
-      });
-    });
-    // this.productService.save(payload).subscribe(...)
   }
 }
