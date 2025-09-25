@@ -6,11 +6,13 @@ import { HomeComponent } from '../../pages/admin/home/home.component';
 import { ProductListComponent } from '../../pages/admin/product-list/product-list.component';
 import { ProductEditComponent } from '../../pages/admin/product-edit/product-edit.component';
 import { ProductComponent } from '../../pages/admin/product/product.component';
+import { AuthGuard } from '../../helpers/guards/auth.guard';
 
 const routes: Routes = [
   {
     path: '',
     component: AdminLayoutComponent,
+    canActivateChild: [AuthGuard],
     children: [
       {
         path: 'home',

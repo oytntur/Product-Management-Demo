@@ -36,7 +36,7 @@ export class AuthService {
   }
 
   get currentUser(): CurrentUser | null | undefined {
-    return this.authedUser();
+    return this.readStoredUser();
   }
 
   set currentUser(user: CurrentUser | null | undefined) {
