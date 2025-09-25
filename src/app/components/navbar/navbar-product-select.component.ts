@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { DxSelectBoxModule } from 'devextreme-angular';
 import { ProductService } from '../../helpers/services/product.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -8,30 +8,63 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-navbar-product-select',
   template: `
-    <div class="d-flex align-items-center gap-2">
-      <h3 class="m-0">Ürün Detay /</h3>
+    <div class="product-picker">
+      <h3 class="product-picker__title">Ürün Detay /</h3>
       <dx-select-box
+        class="product-picker__select"
         [items]="(products$ | async) || []"
         placeholder="Ürün seçin"
         valueExpr="id"
         [value]="currentProductId()"
         displayExpr="name"
-        style="width: 300px;"
         (onValueChanged)="onProductSelected($event)"
       ></dx-select-box>
     </div>
   `,
-  styles: [],
+  styles: [
+    `
+      :host {
+        display: contents;
+      }
+
+      .product-picker {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        color: #fff;
+      }
+
+      .product-picker__title {
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .product-picker__select {
+        min-width: 220px;
+        flex: 0 0 auto;
+      }
+
+      @media (max-width: 767px) {
+        .product-picker__select {
+          flex: 1 1 100%;
+          min-width: 0;
+          width: 100% !important;
+        }
+      }
+    `,
+  ],
   imports: [DxSelectBoxModule, AsyncPipe],
 })
 export class NavbarProductSelectComponent {
-  productService = inject(ProductService);
-  products$ = this.productService.getProducts().pipe(takeUntilDestroyed());
+  private readonly productService = inject(ProductService);
+  readonly products$ = this.productService.getProducts().pipe(takeUntilDestroyed());
 
-  router = inject(Router);
+  private readonly router = inject(Router);
 
-  currentProductId = computed(() => {
-    // Mevcut URL'den productId değerini al
+  readonly currentProductId = computed(() => {
     const url = this.router.url;
     const match = url.match(/products\/(\d+)/);
     return match ? Number(match[1]) : null;
@@ -39,9 +72,7 @@ export class NavbarProductSelectComponent {
 
   onProductSelected(event: any) {
     const selectedProductId = event.value;
-    // Mevcut rotayı al ve productId parametresini değiştir
     const currentUrl = this.router.url;
-
     const newUrl = currentUrl.replace(/products\/\d+/, `products/${selectedProductId}`);
     this.router.navigateByUrl(newUrl);
   }

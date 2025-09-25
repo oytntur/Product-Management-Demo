@@ -1,59 +1,168 @@
-<div class="login-page">
-  <h2>Kayıt Sayfası</h2>
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <div class="mb-3">
-      <dx-text-box
-        label="Ad Soyad"
-        labelMode="floating"
-        formControlName="fullName"
-        placeholder="Adınız ve soyadınız"
-      />
-    </div>
-    <div class="mb-3">
-      <dx-text-box
-        mode="email"
-        label="E-posta"
-        labelMode="floating"
-        formControlName="email"
-        aria-describedby="emailHelpId"
-        placeholder="abc@mail.com"
-      />
-    </div>
-    <div class="mb-3">
-      <dx-text-box
-        mode="password"
-        label="Şifre"
-        labelMode="floating"
-        formControlName="password"
-        aria-describedby="passwordHelpId"
-        placeholder="Şifre"
-      />
-    </div>
-    <div class="mb-3">
-      <dx-text-box
-        mode="password"
-        label="Şifreyi Onayla"
-        labelMode="floating"
-        formControlName="confirmPassword"
-        aria-describedby="passwordHelpId"
-        placeholder="Şifre"
-      />
-    </div>
+<div class="register-page container py-5">
+  <div class="row justify-content-center">
+    <div class="col-xl-8 col-lg-9">
+      <div class="card border-0 shadow-lg overflow-hidden">
+        <div class="row g-0">
+          <div class="d-none d-md-flex col-md-5 bg-primary text-white">
+            <div class="p-4 p-xl-5 d-flex flex-column justify-content-between w-100">
+              <div>
+                <span class="badge bg-white text-primary mb-3 fw-semibold">Hoş geldiniz</span>
+                <h2 class="h3 fw-bold">Sabah Yıldızı'na Katılın</h2>
+                <p class="text-white-50 mb-4">
+                  İş akışınızı hızlandırmak, raporlarınızı takip etmek ve ekibinizle anında
+                  iletişim kurmak için yeni hesabınızı dakikalar içinde oluşturun.
+                </p>
+              </div>
+              <ul class="list-unstyled text-white-50 small mb-0">
+                <li class="mb-2">• Merkezi kullanıcı yönetimi</li>
+                <li class="mb-2">• Güvenli oturum ve çoklu cihaz desteği</li>
+                <li>• Gelişmiş raporlama panelleri</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-7 bg-white">
+            <div class="card-body p-4 p-xl-5">
+              <div class="mb-4 text-center text-md-start">
+                <h1 class="h3 mb-1">Yeni Hesap Oluşturun</h1>
+                <p class="text-muted mb-0">Tüm alanları doldurarak birkaç adımda erişime hazır olun.</p>
+              </div>
 
-    @if (errorMessage(); as error) {
-    <div class="alert alert-danger" role="alert">{{ error }}</div>
-    } @if (successMessage(); as success) {
-    <div class="alert alert-success" role="alert">{{ success }}</div>
-    }
+              @if (errorMessage(); as error) {
+              <div class="alert alert-danger d-flex align-items-center gap-2" role="alert">
+                <span class="fw-semibold">Hata:</span>
+                <span>{{ error }}</span>
+              </div>
+              }
 
-    <dx-button
-      type="default"
-      stylingMode="contained"
-      icon="save"
-      [disabled]="registerForm.invalid"
-      [useSubmitBehavior]="true"
-    >
-      Gönder
-    </dx-button>
-  </form>
+              @if (successMessage(); as success) {
+              <div class="alert alert-success d-flex align-items-center gap-2" role="alert">
+                <span class="fw-semibold">Başarılı:</span>
+                <span>{{ success }}</span>
+              </div>
+              }
+
+              <form class="mt-4" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+                @let fullNameControl = registerForm.get('fullName');
+                @let emailControl = registerForm.get('email');
+                @let passwordControl = registerForm.get('password');
+                @let confirmPasswordControl = registerForm.get('confirmPassword');
+
+                <div class="mb-4">
+                  <label class="form-label fw-semibold" for="fullNameInput">Ad Soyad</label>
+                  <dx-text-box
+                    formControlName="fullName"
+                    placeholder="Adınızı ve soyadınızı yazın"
+                    [showClearButton]="true"
+                    labelMode="hidden"
+                    [inputAttr]="{ id: 'fullNameInput', autocomplete: 'name' }"
+                  />
+                  @if (fullNameControl?.invalid && (fullNameControl?.dirty || fullNameControl?.touched)) {
+                  <div class="form-text text-danger">
+                    @if (fullNameControl?.hasError('required')) { Lütfen adınızı ve soyadınızı girin. }
+                    @if (fullNameControl?.hasError('minlength')) { En az 3 karakter olmalıdır. }
+                  </div>
+                  } @else {
+                  <div class="form-text text-muted">Profilinizde görünecek iletişim bilgisi.</div>
+                  }
+                </div>
+
+                <div class="mb-4">
+                  <label class="form-label fw-semibold" for="emailInput">E-posta adresi</label>
+                  <dx-text-box
+                    mode="email"
+                    formControlName="email"
+                    placeholder="ornek@sirket.com"
+                    [showClearButton]="true"
+                    labelMode="hidden"
+                    [inputAttr]="{ id: 'emailInput', autocomplete: 'email' }"
+                  />
+                  @if (emailControl?.invalid && (emailControl?.dirty || emailControl?.touched)) {
+                  <div class="form-text text-danger">
+                    @if (emailControl?.hasError('required')) { E-posta adresi zorunludur. }
+                    @if (emailControl?.hasError('email')) { Lütfen geçerli bir e-posta girin. }
+                  </div>
+                  } @else {
+                  <div class="form-text text-muted">Kurtarma bağlantıları ve bildiriler bu adrese gelir.</div>
+                  }
+                </div>
+
+                <div class="mb-4">
+                  <label class="form-label fw-semibold" for="passwordInput">Şifre</label>
+                  <dx-text-box
+                    mode="password"
+                    formControlName="password"
+                    placeholder="Güçlü bir şifre seçin"
+                    [showClearButton]="true"
+                    labelMode="hidden"
+                    [inputAttr]="{ id: 'passwordInput', autocomplete: 'new-password' }"
+                  />
+                  @if (passwordControl?.invalid && (passwordControl?.dirty || passwordControl?.touched)) {
+                  <div class="form-text text-danger">
+                    @if (passwordControl?.hasError('required')) { Şifre zorunludur. }
+                    @if (passwordControl?.hasError('minlength')) { En az 6 karakter olmalıdır. }
+                  </div>
+                  } @else {
+                  <div class="form-text text-muted">En az 6 karakter, harf ve rakam karışımı önerilir.</div>
+                  }
+                </div>
+
+                <div class="mb-4">
+                  <label class="form-label fw-semibold" for="confirmPasswordInput">Şifreyi doğrulayın</label>
+                  <dx-text-box
+                    mode="password"
+                    formControlName="confirmPassword"
+                    placeholder="Şifrenizi tekrar yazın"
+                    [showClearButton]="true"
+                    labelMode="hidden"
+                    [inputAttr]="{ id: 'confirmPasswordInput', autocomplete: 'new-password' }"
+                  />
+                  @if (
+                    (confirmPasswordControl?.dirty || confirmPasswordControl?.touched) &&
+                    registerForm.hasError('passwordMismatch')
+                  ) {
+                  <div class="form-text text-danger">Şifreler birbiriyle eşleşmiyor.</div>
+                  } @else {
+                  <div class="form-text text-muted">Hatanın önüne geçmek için şifrenizi tekrar kontrol edin.</div>
+                  }
+                </div>
+
+                <div class="bg-light rounded-3 p-3 mb-4 small text-muted">
+                  <strong>Güvenlik ipucu:</strong> Hesap güvenliğiniz için tek kullanımlık doğrulama
+                  yöntemlerini etkinleştirmeyi unutmayın. Giriş yaptıktan sonra profil ayarlarından
+                  yapılandırabilirsiniz.
+                </div>
+
+                <div class="d-grid gap-2">
+                  <dx-button
+                    type="default"
+                    stylingMode="contained"
+                    icon="save"
+                    [disabled]="registerForm.invalid || isSubmitting()"
+                    [useSubmitBehavior]="true"
+                  >
+                    <ng-template dxTemplate="content">
+                      @if (isSubmitting()) {
+                      <span
+                        class="spinner-border spinner-border-sm align-text-bottom me-2"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                      Kaydediliyor...
+                      } @else {
+                      Hesap Oluştur
+                      }
+                    </ng-template>
+                  </dx-button>
+                  <p class="text-center text-muted mb-0">
+                    Zaten hesabınız var mı?
+                    <a class="text-decoration-none fw-semibold" href="/auth/login">Giriş yapın</a>
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

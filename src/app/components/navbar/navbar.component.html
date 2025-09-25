@@ -1,8 +1,18 @@
-<nav
-  class="navbar navbar-expand-sm navbar-light bg-primary px-2 d-flex justify-content-between align-items-center"
->
-  <ng-container *ngComponentOutlet="headerComponent()"></ng-container>
-  <span class="navbar-text">{{ currentUser()?.fullName }}</span>
-  <span routerLink="/admin/home">Go To Homepage</span>
-  <span routerLink="/admin/products">Go To Products</span>
+<nav class="navbar navbar-expand-sm navbar-dark bg-primary py-3 px-3">
+  <div class="navbar-content d-flex align-items-center flex-grow-1 gap-3">
+    <ng-container *ngComponentOutlet="headerComponent()"></ng-container>
+
+    <div class="ms-auto d-flex align-items-center gap-3">
+      <a routerLink="/admin/home" class="navbar-link">Ana Sayfa</a>
+      <a routerLink="/admin/products" class="navbar-link">Ürünler</a>
+
+      <div class="profile-chip">
+        <span class="profile-avatar" aria-hidden="true">{{ userInitials() }}</span>
+        <div class="profile-details">
+          <span class="profile-name">{{ currentUser()?.fullName ?? 'Misafir Kullanıcı' }}</span>
+          <small class="profile-meta">Yönetici Paneli</small>
+        </div>
+      </div>
+    </div>
+  </div>
 </nav>

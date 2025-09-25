@@ -1,12 +1,20 @@
 <h2>Yönetim Ürün Listesi</h2>
-<dx-button
-  text="Yeni Ürün Ekle"
-  icon="plus"
-  type="success"
-  stylingMode="contained"
-  class="mb-3"
-  routerLink="/admin/products/new"
-></dx-button>
+<div class="d-flex flex-wrap gap-2 mb-3">
+  <dx-button
+    text="Ana Sayfa"
+    icon="home"
+    type="normal"
+    stylingMode="contained"
+    routerLink="/admin/home"
+  ></dx-button>
+  <dx-button
+    text="Yeni Ürün Ekle"
+    icon="plus"
+    type="success"
+    stylingMode="contained"
+    routerLink="/admin/products/new"
+  ></dx-button>
+</div>
 @if(dataGridDataSource){
 <dx-data-grid
   [dataSource]="dataGridDataSource"

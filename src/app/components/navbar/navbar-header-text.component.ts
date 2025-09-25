@@ -5,7 +5,18 @@ import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-navbar-header-text',
-  template: '<h3 class="m-0">{{ title() }}</h3>',
+  template: '<h3 class="navigation-title">{{ title() }}</h3>',
+  styles: [
+    `
+      .navigation-title {
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: #fff;
+      }
+    `,
+  ],
 })
 export class NavbarHeaderTextComponent {
   private readonly activatedRoute = inject(ActivatedRoute);

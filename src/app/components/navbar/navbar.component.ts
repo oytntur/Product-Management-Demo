@@ -1,6 +1,6 @@
 import { NgComponentOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavbarProductSelectComponent } from './navbar-product-select.component';
@@ -17,7 +17,6 @@ import { AuthService } from '../../helpers/services/auth.service';
 })
 export class NavbarComponent {
   private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthService);
 
   private readonly currentUrl = toSignal(
@@ -37,7 +36,19 @@ export class NavbarComponent {
 
   readonly currentUser = this.authService.authedUser;
 
-  constructor() {
-    console.log('aaaaaaaaa', this.currentUrl().match(/^\/admin\/products\/\d+$/));
-  }
+  readonly userInitials = computed(() => {
+    const fullName = this.currentUser()?.fullName?.trim();
+
+    if (!fullName) {
+      return '?';
+    }
+
+    const parts = fullName.split(/\s+/).filter(Boolean);
+    const initials = parts
+      .slice(0, 2)
+      .map((part) => part.charAt(0).toUpperCase())
+      .join('');
+
+    return initials || fullName.charAt(0).toUpperCase();
+  });
 }
