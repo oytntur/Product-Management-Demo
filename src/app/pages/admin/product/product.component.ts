@@ -21,6 +21,7 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-admin-product',
+  standalone: true,
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.scss'],
   imports: [

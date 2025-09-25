@@ -21,6 +21,7 @@ import { Product } from '../../../helpers/models/product.model';
 
 @Component({
   selector: 'app-admin-product-list',
+  standalone: true,
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss'],
   imports: [DxDataGridModule, DxContextMenuModule, DxButtonModule, RouterLink],

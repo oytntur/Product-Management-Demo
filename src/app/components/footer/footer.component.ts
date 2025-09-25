@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-footer',
+  standalone: true,
   template: ` <footer class="footer">
     <div class="container">
       <span class="text-muted">Sabah Yıldızı Admin Panel © 2024</span>

@@ -5,6 +5,7 @@ import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-admin-layout',
+  standalone: true,
   template: `
     <app-navbar></app-navbar>
     <main class="layout-main">
