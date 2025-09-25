@@ -82,7 +82,6 @@ export class AuthService {
   }
 
   getAccessToken(): string | null {
-    console.log('AuthService.getAccessToken çağrıldı');
     const current = this.authedUser();
     if (current?.accessToken) {
       return current.accessToken;

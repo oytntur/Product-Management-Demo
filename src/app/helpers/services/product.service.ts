@@ -66,8 +66,6 @@ export class ProductService {
     options: { notify?: boolean } = {}
   ): Observable<Product> {
     const body = this.toProductBody(payload);
-
-    console.log('Creating product with body:', body);
     const { notify = true } = options;
 
     return this.httpClient

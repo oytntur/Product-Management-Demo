@@ -42,7 +42,6 @@ export class ProductListComponent {
       return products;
     },
     update: (key, values) => {
-      console.log('CustomStore update çağrıldı:', { key, values });
       const productId = +key;
       if (!Number.isInteger(productId)) {
         return Promise.reject('Geçersiz ürün kimliği');
@@ -70,13 +69,9 @@ export class ProductListComponent {
       const update$ = this.productsService
         .updateProduct(productId, updates)
         .pipe(takeUntilDestroyed(this.destroyRef));
-      return firstValueFrom(update$).then((updatedProduct) => {
-        console.log('Ürün başarıyla güncellendi:', updatedProduct);
-        return updatedProduct;
-      });
+      return firstValueFrom(update$);
     },
     remove: (key) => {
-      console.log('CustomStore remove çağrıldı:');
       const productId = +key;
       if (!Number.isInteger(productId)) {
         return Promise.reject('Geçersiz ürün kimliği');
@@ -85,12 +80,9 @@ export class ProductListComponent {
       const delete$ = this.productsService
         .deleteProduct(productId)
         .pipe(takeUntilDestroyed(this.destroyRef));
-      return firstValueFrom(delete$).then((deletedProduct) => {
-        console.log('Ürün başarıyla silindi:', deletedProduct);
-      });
+      return firstValueFrom(delete$).then(() => undefined);
     },
     insert: (values) => {
-      console.log('CustomStore insert çağrıldı:', { values });
       const payload: ProductCreatePayload = {
         name: '',
       };
@@ -115,10 +107,7 @@ export class ProductListComponent {
       const create$ = this.productsService
         .createProduct(payload)
         .pipe(takeUntilDestroyed(this.destroyRef));
-      return firstValueFrom(create$).then((createdProduct) => {
-        console.log('Ürün başarıyla oluşturuldu:', createdProduct);
-        return createdProduct;
-      });
+      return firstValueFrom(create$);
     },
   });
 
@@ -138,9 +127,7 @@ export class ProductListComponent {
   }
 
   updateProduct(event: RowUpdatingEvent) {
-    console.log('Güncellenen ürün:', event);
     const productId = +event.key.id;
-    console.log('Ürün kimliği:', productId);
     if (!Number.isInteger(productId)) {
       console.warn('Geçersiz ürün kimliği, güncelleme atlandı:', event);
       return;
@@ -170,9 +157,7 @@ export class ProductListComponent {
       .updateProduct(productId, updates)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (updatedProduct) => {
-          console.log('Ürün başarıyla güncellendi:', updatedProduct);
-        },
+        next: () => {},
         error: (err) => {
           console.error('Ürün güncellenirken hata oluştu:', err);
         },
@@ -180,11 +165,8 @@ export class ProductListComponent {
   }
 
   deleteProduct(event: RowRemovedEvent) {
-    console.log('Silinen ürün:', event.data);
     this.productsService.deleteProduct(event.data.id).subscribe({
-      next: (deletedProduct) => {
-        console.log('Ürün başarıyla silindi', deletedProduct);
-      },
+      next: () => {},
       error: (err) => {
         console.error('Ürün silinirken hata oluştu:', err);
       },
@@ -196,7 +178,6 @@ export class ProductListComponent {
   }
 
   stopEditing() {
-    console.log('Düzenleme modu kapatılıyor');
     this.editingGrid.set(false);
   }
 }
